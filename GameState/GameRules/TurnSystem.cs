@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GameState.Cards.Collection;
+using GameState.GameRules;
 
 namespace GameState.GameRules
 {
-    internal class TurnSystem
+    internal class TurnSystem : IGameEvent
     {
         public int TurnCount { get; private set; } = 0;
         public Player GoesFirst { get; private set; }
@@ -46,6 +47,8 @@ namespace GameState.GameRules
             var minions = player.Board.GetAllMinions().ToList();
             minions.ForEach(x => x.AttacksThisTurn = 0);
 
+            GameEventTriggered?.Invoke(new GameEvent(player.OwnerId, GameEventType.TurnStart, $"{player.Name}'s {TurnCount.GetOrdinalSuffix()} turn has started."));
+
             player.PromptTurnActions();
 
             EndTurn(player);
@@ -56,6 +59,10 @@ namespace GameState.GameRules
             player.IsMyTurn = false;
             var minions = player.Board.GetAllMinions().Where(x => x.SleepTurnTimer > 0).ToList();
             minions.ForEach(x => x.SleepTurnTimer--);
+            
+            GameEventTriggered?.Invoke(new GameEvent(player.OwnerId, GameEventType.TurnEnd, $"{player.Name}'s {TurnCount.GetOrdinalSuffix()} turn has ended."));
         }
+
+        public event IGameEvent.GameEventHandler GameEventTriggered;
     }
 }

@@ -50,8 +50,8 @@ namespace GameState
         public override string GameToString()
         {
             var cah = GetCostAttackHealthForPrint();
-            var text = !string.IsNullOrWhiteSpace(Text) ? $"{Text} " : string.Empty;
-            return $"[ {ColorConsole.FormatEmbeddedColor(Name, (ConsoleColor)Rarity)} ({ColorConsole.FormatEmbeddedColor(cah.Cost.Value, cah.Cost.Color)}/{ColorConsole.FormatEmbeddedColor(cah.Attack.Value, cah.Attack.Color)}/{ColorConsole.FormatEmbeddedColor(cah.Health.Value, cah.Health.Color)}) {text}]";
+            var text = !string.IsNullOrWhiteSpace(Text) ? $" {Text}" : string.Empty;
+            return $"[{ColorConsole.FormatEmbeddedColor(Name, (ConsoleColor)Rarity)} ({ColorConsole.FormatEmbeddedColor(cah.Cost.Value, cah.Cost.Color)}/{ColorConsole.FormatEmbeddedColor(cah.Attack.Value, cah.Attack.Color)}/{ColorConsole.FormatEmbeddedColor(cah.Health.Value, cah.Health.Color)}){text}]";
         }
 
         private ((string Value, ConsoleColor Color) Cost, (string Value, ConsoleColor Color) Attack, (string Value, ConsoleColor

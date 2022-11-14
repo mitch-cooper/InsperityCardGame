@@ -49,8 +49,9 @@ namespace GameState
 
                 foreach (var (playableCard, index) in Hand.GetPlayableCards(Coins.CurrentValue).WithIndex())
                 {
-                    actions[Constants.HandCardKeys[index]] =
-                        ($"Play {playableCard.GameToString()}", Hand.PlayCard(playableCard.Id));
+                    // TODO: fix
+                    //actions[Constants.HandCardKeys[index]] =
+                    //    ($"Play {playableCard.GameToString()}", Hand.PlayCard(playableCard.Id));
                 }
 
                 foreach (var attackableMinion in Board.GetMinionsThatCanAttack())
@@ -108,7 +109,7 @@ namespace GameState
             var health = Health.GameToStringValues();
             var attack = Attack.GameToStringValues();
             var attackText = attack.Value == "0" ? string.Empty : $"{ColorConsole.FormatEmbeddedColor(attack.Value, attack.Color)}/";
-            return $"[ {Name} ({attackText}{ColorConsole.FormatEmbeddedColor(health.Value, health.Color)}) ]";
+            return $"[{Name} ({attackText}{ColorConsole.FormatEmbeddedColor(health.Value, health.Color)})]";
         }
 
         public void PrintPlayersTurnDisplay()

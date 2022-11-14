@@ -11,6 +11,10 @@ namespace GameState
         internal static Player Player1 { get; set; }
         internal static Player Player2 { get; set; }
         internal static TurnSystem TurnSystem { get; set; } = new TurnSystem();
+        internal static Logger HistoryLog { get; set; } = new Logger();
+
+        //public delegate void GameEventHandler(GameEvent gameEvent);
+        //public static event GameEventHandler GameEventTriggered;
 
         internal static Player GetPlayer(int id)
         {
@@ -35,7 +39,9 @@ namespace GameState
             Player1.ResetPlayer();
             Player2.ResetPlayer();
 
+            HistoryLog.ResetHistory();
             TurnSystem.ResetTurns(Player1, Player2);
+            TurnSystem.GameEventTriggered += HistoryLog.AddEvent;
 
             PrintGame();
 
@@ -70,6 +76,8 @@ namespace GameState
             PrintPlayer(Player2, true);
             PrintDivider();
             PrintPlayer(Player1, false);
+            ColorConsole.WriteLine(string.Empty);
+            HistoryLog.PrintNthEvents(3);
             ColorConsole.WriteLine(string.Empty);
             ColorConsole.WriteLine(string.Empty);
         }

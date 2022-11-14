@@ -33,7 +33,7 @@ namespace GameState
         {
             var cost = Cost.GameToStringValues();
             return
-                $"[ {ColorConsole.FormatEmbeddedColor(Name, (ConsoleColor) Rarity)} ({ColorConsole.FormatEmbeddedColor(cost.Value, cost.Color)}) {DisplayText} ]";
+                $"[{ColorConsole.FormatEmbeddedColor(Name, (ConsoleColor) Rarity)} ({ColorConsole.FormatEmbeddedColor(cost.Value, cost.Color)}) {DisplayText}]";
         }
     }
 

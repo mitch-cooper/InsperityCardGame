@@ -5,25 +5,6 @@ using System.Text.RegularExpressions;
 
 namespace GameState
 {
-    //public static class ConsolePrinter
-    //{
-    //    public static void Write(string message, ConsoleColor? foregroundColor = null)
-    //    {
-    //        if (foregroundColor.HasValue)
-    //        {
-
-    //        }
-    //        Console.ForegroundColor = foregroundColor;
-    //        Console.Write(message);
-    //    }
-
-    //    public static void WriteLine(string message, ConsoleColor? foregroundColor = null)
-    //    {
-    //        Console.ForegroundColor = foregroundColor;
-    //        Console.WriteLine(message);
-    //    }
-    //}
-
     /// <summary>
     /// Console Color Helper class that provides coloring to individual commands
     /// </summary>

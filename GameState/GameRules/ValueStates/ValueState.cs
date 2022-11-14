@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GameState.GameRules
 {
-    public abstract class ValueState : IConsoleGameToString
+    public abstract class ValueState : ConsoleGameToString
     {
         public int BaseValue { get; protected set; }
         public int CurrentValue { get; protected set; }
@@ -42,24 +42,24 @@ namespace GameState.GameRules
             return (CurrentValue.ToString(), ConsoleColor.White);
         }
 
-        public string GameToString()
+        public override string GameToString()
         {
             var values = GameToStringValues();
             return ColorConsole.FormatEmbeddedColor(values.Value, values.Color);
         }
 
-        public string GameToString(int currentPlayerId)
+        public override string GameToString(int currentPlayerId)
         {
             return GameToString();
         }
 
-        public void PrintGameToString()
+        public override void PrintGameToString()
         {
             var values = GameToStringValues();
             ColorConsole.Write(values.Value, values.Color);
         }
 
-        public void PrintGameToString(int currentPlayerId)
+        public override void PrintGameToString(int currentPlayerId)
         {
             PrintGameToString();
         }

@@ -9,12 +9,4 @@ namespace GameState.GameRules
         // void DrawToConsole(bool useNewLine = true);
         List<string> GetDrawToConsoleLines();
     }
-
-    public interface IConsoleGameToString
-    {
-        string GameToString();
-        string GameToString(int currentPlayerId);
-        void PrintGameToString();
-        void PrintGameToString(int currentPlayerId);
-    }
 }

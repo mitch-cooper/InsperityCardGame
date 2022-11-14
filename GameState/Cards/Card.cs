@@ -5,7 +5,7 @@ using GameState.GameRules;
 
 namespace GameState
 {
-    public abstract class Card : IConsoleGameToString, IOwnable
+    public abstract class Card : ConsoleGameToString, IOwnable
     {
         public Guid Id { get; protected set; }
         public int OwnerId { get; protected set; }
@@ -40,21 +40,12 @@ namespace GameState
 
         //protected abstract void StuffThatShouldHappenOnEveryPlay();
 
-        public abstract string GameToString();
+        public abstract override string GameToString();
 
-        public string GameToString(int currentPlayerId)
+        public override string GameToString(int currentPlayerId)
         {
             var ownerPrefix = OwnerId == currentPlayerId ? $"{ColorConsole.FormatEmbeddedColor("Friend", ConsoleColor.Green)}" : $"{ColorConsole.FormatEmbeddedColor("Enemy", ConsoleColor.Red)}";
-            return $"[{ownerPrefix} - {GameToString().TrimStart('[')}";
-        }
-
-        public void PrintGameToString()
-        {
-            ColorConsole.WriteEmbeddedColorLine(GameToString());
-        }
-        public void PrintGameToString(int currentPlayerId)
-        {
-            ColorConsole.WriteEmbeddedColorLine(GameToString(currentPlayerId));
+            return $"[{ownerPrefix} - {GameToString().TrimStart('[').TrimEnd(']')}]";
         }
     }
 
