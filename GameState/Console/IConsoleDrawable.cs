@@ -6,7 +6,6 @@ namespace GameState.GameRules
 {
     public interface IConsoleDrawable
     {
-        // void DrawToConsole(bool useNewLine = true);
         List<string> GetDrawToConsoleLines();
     }
 }

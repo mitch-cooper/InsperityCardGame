@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using GameState;
 using GameState.Cards.Collection;
@@ -8,6 +9,9 @@ namespace Test
     [TestClass]
     public class DeckTest
     {
+
+        public Guid TheGuid = Guid.NewGuid();
+
         [TestInitialize]
         public void Initialize()
         {
@@ -18,7 +22,7 @@ namespace Test
         public void Draw_RemovesACardFromDeck()
         {
             // Arrange
-            var playerId = 1;
+            var playerId = TheGuid;
             var sut = new Deck(new List<Card>()
             {
                 NeutralCards.Employee().Build(playerId),
@@ -37,7 +41,7 @@ namespace Test
         public void Draw_WithEmptyDeck_DrawsFatigueCard()
         {
             // Arrange
-            var playerId = 1;
+            var playerId = TheGuid;
             var sut = new Deck(new List<Card>(), playerId);
 
             // Act
@@ -52,7 +56,7 @@ namespace Test
         public void Draw_WithEmptyDeck_DrawsFatigueCardWithIncreasingDamage()
         {
             // Arrange
-            var playerId = 1;
+            var playerId = TheGuid;
             var sut = new Deck(new List<Card>(), playerId);
             var fatigueDraws = new List<Spell>();
             var iterations = 5;

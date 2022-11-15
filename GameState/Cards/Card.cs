@@ -7,24 +7,22 @@ namespace GameState
 {
     public abstract class Card : ConsoleGameToString, IOwnable
     {
-        public Guid Id { get; protected set; }
-        public int OwnerId { get; protected set; }
+        public Guid CardId { get; protected set; }
+        public Guid OwnerId { get; protected set; }
         public string Name { get; protected set; }
         public string Text { get; protected set; }
         public Rarity Rarity { get; protected set; }
         public CostValueState Cost { get; protected set; }
-        public Action<int> OnPlay { get; protected set; }
-        //public delegate void OnPlay(int playerId);
-        //public event OnPlay CardPlayed;
-        public Action<int> OnDraw { get; protected set; }
+        public Action<Guid> OnPlay { get; protected set; }
+        public Action<Guid> OnDraw { get; protected set; }
 
         protected Card()
         {
-            Id = Guid.NewGuid();
+            CardId = Guid.NewGuid();
             Cost = new CostValueState(0);
         }
 
-        protected Card(int ownerId, string name, string text, Rarity rarity, int cost) : this()
+        protected Card(Guid ownerId, string name, string text, Rarity rarity, int cost) : this()
         {
             OwnerId = ownerId;
             Name = name;
@@ -33,16 +31,9 @@ namespace GameState
             Cost = new CostValueState(cost);
         }
 
-        //public void Play()
-        //{
-        //    CardPlayed?.Invoke(OwnerId);
-        //}
-
-        //protected abstract void StuffThatShouldHappenOnEveryPlay();
-
         public abstract override string GameToString();
 
-        public override string GameToString(int currentPlayerId)
+        public override string GameToString(Guid currentPlayerId)
         {
             var ownerPrefix = OwnerId == currentPlayerId ? $"{ColorConsole.FormatEmbeddedColor("Friend", ConsoleColor.Green)}" : $"{ColorConsole.FormatEmbeddedColor("Enemy", ConsoleColor.Red)}";
             return $"[{ownerPrefix} - {GameToString().TrimStart('[').TrimEnd(']')}]";

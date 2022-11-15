@@ -8,10 +8,13 @@ namespace GameState
 {
     public class Player : BoardCharacter, IConsoleDrawable
     {
-        public Player(int ownerId, string name, IDeck deck)
+        private readonly string _displayNumber;
+
+        public Player(Guid ownerId, string name, string displayNumber, IDeck deck) : base()
         {
             OwnerId = ownerId;
             Name = name;
+            _displayNumber = displayNumber;
             Deck = deck;
             Hand = new Hand(ownerId);
             Board = new PlayerBoard(ownerId);
@@ -35,6 +38,11 @@ namespace GameState
             Coins = new CoinValueState(0);
             Attack = new AttackValueState(0);
             Health = new HealthValueState(Constants.BasePlayerHealth);
+            ResetCharacter();
+        }
+        protected override void OnDeathEvent()
+        {
+            OnCharacterEvent(new GameEvent(this, GameEventType.PlayerDeath, $"{Name} has died."));
         }
 
         public void PromptTurnActions()
@@ -42,29 +50,28 @@ namespace GameState
             ConsoleKey actionSelected = ConsoleKey.Spacebar;
             do
             {
-                GameState.PrintGame();
+                GameController.PrintGame();
                 PrintPlayersTurnDisplay();
                 Hand.PrintHand();
-                var actions = new Dictionary<ConsoleKey, (string Label, Action<int> Callback)>();
+                var actions = new Dictionary<ConsoleKey, (string Label, Guid CallbackParam, Action<Guid> Callback)>();
 
                 foreach (var (playableCard, index) in Hand.GetPlayableCards(Coins.CurrentValue).WithIndex())
                 {
-                    // TODO: fix
-                    //actions[Constants.HandCardKeys[index]] =
-                    //    ($"Play {playableCard.GameToString()}", Hand.PlayCard(playableCard.Id));
+                    actions[Constants.HandCardKeys[index]] =
+                        ($"Play {playableCard.GameToString()}", playableCard.CardId, Hand.PlayCard);
                 }
 
                 foreach (var attackableMinion in Board.GetMinionsThatCanAttack())
                 {
                     actions[attackableMinion.Key] =
-                        ($"Attack with {attackableMinion.Value.GameToString()}",
+                        ($"Attack with {attackableMinion.Value.GameToString()}", OwnerId,
                             attackableMinion.Value.PromptAttackAndAttack);
                 }
 
-                actions.Add(Constants.EndTurnKey, ("End turn", Constants.DoNothing));
+                actions.Add(Constants.EndTurnKey, ("End turn", Guid.NewGuid(), (x) => { }));
 
                 actionSelected = Prompts.TurnActions(actions);
-                actions[actionSelected].Callback(OwnerId);
+                actions[actionSelected].Callback(actions[actionSelected].CallbackParam);
             } while (actionSelected != Constants.EndTurnKey);
         }
         
@@ -73,8 +80,6 @@ namespace GameState
             var card = Deck.Draw();
             if (Hand.GetAllCards().Count < Constants.MaxHandSize)
             {
-                // TODO: fix
-                // card.OnDraw(OwnerId);
                 Hand.AddCard(card);
             }
         }
@@ -89,7 +94,7 @@ namespace GameState
                 $"  ___  ",
                 $" /   \\ ",
                 $"|     |",
-                $"| P {OwnerId} |",
+                $"| P {_displayNumber} |",
                 $"|     |",
                 $"|{attackText}_{ColorConsole.FormatEmbeddedColor(health.Value.PadLeft(2, '_'), health.Color)}|",
             };
@@ -121,5 +126,6 @@ namespace GameState
             ColorConsole.WriteLine($"|                                                                  |");
             ColorConsole.WriteLine("|_,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,_|");
         }
+
     }
 }

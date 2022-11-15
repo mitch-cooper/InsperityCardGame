@@ -6,24 +6,21 @@ using GameState.GameRules;
 
 namespace GameState
 {
-    public static class GameState
+    public static class GameController
     {
         internal static Player Player1 { get; set; }
         internal static Player Player2 { get; set; }
         internal static TurnSystem TurnSystem { get; set; } = new TurnSystem();
         internal static Logger HistoryLog { get; set; } = new Logger();
 
-        //public delegate void GameEventHandler(GameEvent gameEvent);
-        //public static event GameEventHandler GameEventTriggered;
-
-        internal static Player GetPlayer(int id)
+        internal static Player GetPlayer(Guid id)
         {
-            return Player1.OwnerId == id ? Player1 : Player2.OwnerId == id ? Player2 : throw new Exception("Player not found");
+            return Player1.OwnerId == id ? Player1 : Player2.OwnerId == id ? Player2 : throw new Exception($"Player not found: {id}");
         }
 
-        internal static Player GetOpponent(int myPlayerId)
+        internal static Player GetOpponent(Guid myPlayerId)
         {
-            return Player1.OwnerId == myPlayerId ? Player2 : Player2.OwnerId == myPlayerId ? Player1 : throw new Exception("Player not found");
+            return Player1.OwnerId == myPlayerId ? Player2 : Player2.OwnerId == myPlayerId ? Player1 : throw new Exception($"Player not found: {myPlayerId}");
         }
 
         public static void StartGame(Player player1, Player player2)
@@ -39,20 +36,19 @@ namespace GameState
             Player1.ResetPlayer();
             Player2.ResetPlayer();
 
+            Player1.GameEventTriggered += PlayerDied;
+            Player2.GameEventTriggered += PlayerDied;
+
             HistoryLog.ResetHistory();
             TurnSystem.ResetTurns(Player1, Player2);
             TurnSystem.GameEventTriggered += HistoryLog.AddEvent;
-
-            PrintGame();
 
             try
             {
                 while (true)
                 {
                     TurnSystem.StartTurn(TurnSystem.GoesFirst);
-                    PrintGame();
                     TurnSystem.StartTurn(TurnSystem.GoesSecond);
-                    PrintGame();
                 }
             }
             catch (PlayerDiedException deadPlayer)
@@ -67,6 +63,20 @@ namespace GameState
             catch (Exception ex)
             {
                 Debugger.Break();
+            }
+        }
+
+        private static void PlayerDied(GameEvent gameEvent)
+        {
+            var winner = GetOpponent(gameEvent.Entity.OwnerId);
+            ColorConsole.WriteWrappedHeader($"{winner.Name} wins!");
+            if (Prompts.WantToPlayAgain())
+            {
+                StartGame(Player1, Player2);
+            }
+            else
+            {
+                Environment.Exit(0);
             }
         }
 

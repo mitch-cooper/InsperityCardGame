@@ -38,11 +38,5 @@ namespace GameState.GameRules
             }
             return (CurrentValue.ToString(), color);
         }
-
-        //public override void PrintGameToString()
-        //{
-        //    var values = GameToStringValues();
-        //    ColorConsole.Write(values.Value, values.Color);
-        //}
     }
 }

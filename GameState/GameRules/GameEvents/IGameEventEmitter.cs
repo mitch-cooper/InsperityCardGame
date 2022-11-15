@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GameState.GameRules
 {
-    internal interface IGameEvent
+    public interface IGameEventEmitter
     {
         delegate void GameEventHandler(GameEvent gameEvent);
         event GameEventHandler GameEventTriggered;

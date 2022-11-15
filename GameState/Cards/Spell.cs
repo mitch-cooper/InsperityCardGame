@@ -7,17 +7,18 @@ using GameState.GameRules;
 
 namespace GameState
 {
-    public class Spell : Card
+    public class Spell : Card, ISpell
     {
-        //public Action<int> OnPlay { get; protected set; }
-        public new Action<SpellBuilder, int> OnDraw { get; protected set; }
+        public new Action<ISpell, Guid> OnDraw { get; protected set; }
+        public new Action<ISpell, Guid> OnPlay { get; protected set; }
         public List<int> SpellValues { get; protected set; }
         public SpellType Type { get; protected set; }
 
         public Spell(SpellBuilder builder)
         {
+            OwnerId = builder.OwnerId;
             Name = builder.Name;
-            Cost = new CostValueState(builder.Cost);
+            Cost = builder.Cost;
             Text = builder.Text;
             Rarity = builder.Rarity;
 

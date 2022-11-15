@@ -8,9 +8,9 @@ namespace GameState
 {
     public static class Constants
     {
-        public static Action<int> DoNothing => (playerId) => { };
-        public static Action<SpellBuilder, int> DoNothingSpell => (builder, playerId) => { };
-        public static Action<MinionBuilder, int> DoNothingMinion => (builder, playerId) => { };
+        public static Action<Guid> DoNothing => (playerId) => { };
+        public static Action<ISpell, Guid> DoNothingSpell => (builder, playerId) => { };
+        public static Action<MinionBuilder, Guid> DoNothingMinion => (builder, playerId) => { };
 
         public static readonly int BaseDeckSize = 20;
         public static readonly int MaxHandSize = 8;

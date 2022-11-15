@@ -6,6 +6,6 @@ namespace GameState.GameRules
 {
     public interface IOwnable
     {
-        public int OwnerId { get; }
+        public Guid OwnerId { get; }
     }
 }

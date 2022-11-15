@@ -6,20 +6,13 @@ using GameState.GameRules;
 
 namespace GameState
 {
-    public interface IPlayerBoard
+    public class PlayerBoard : IPlayerBoard, IGameEventEmitter, IConsoleDrawable, IOwnable
     {
-        List<Minion> GetAllMinions();
-        Dictionary<ConsoleKey, Minion> GetMinionsThatCanAttack();
-        Dictionary<ConsoleKey, IBoardItem> GetAttackableTargets();
-        void ResetBoard();
-        bool HasMaxMinions();
-    }
-    public class PlayerBoard : IPlayerBoard, IConsoleDrawable
-    {
-        public int OwnerId { get; }
+        public Guid OwnerId { get; }
         protected List<Minion> Minions { get; private set; }
+        public event IGameEventEmitter.GameEventHandler GameEventTriggered;
 
-        public PlayerBoard(int playerId)
+        public PlayerBoard(Guid playerId)
         {
             OwnerId = playerId;
             ResetBoard();
@@ -47,7 +40,7 @@ namespace GameState
             {
                 boardItems[Constants.OpponentsMinionKeys[index]] = minion;
             }
-            boardItems[Constants.OpponentPlayerKey] = GameState.GetPlayer(OwnerId);
+            boardItems[Constants.OpponentPlayerKey] = GameController.GetPlayer(OwnerId);
             return boardItems;
         }
 
@@ -61,19 +54,24 @@ namespace GameState
             return Minions.Count == Constants.MaxMinions;
         }
 
+        public void SummonMinion(Minion minion)
+        {
+            if (!HasMaxMinions())
+            {
+                Minions.Add(minion);
+                GameEventTriggered?.Invoke(new GameEvent(minion, GameEventType.MinionSummon, $"{minion.Name} summoned."));
+            }
+        }
+
         public List<string> GetDrawToConsoleLines()
         {
             var lines = GameToConsoleHelper.InitializeListWithValue("", 8);
-            var isMyTurn = GameState.GetPlayer(OwnerId).IsMyTurn;
+            var isMyTurn = GameController.GetPlayer(OwnerId).IsMyTurn;
 
             foreach (var minion in Minions)
             {
-                var minionLines = minion.GetDrawToConsoleLines();
-                minionLines.ForEach(x =>
-                {
-                    x = $" {x}  ";
-                });
-                for (int i = 0; i < lines.Count - 3; i++)
+                var minionLines = minion.GetDrawToConsoleLines().Select(x => $" {x}  ").ToList();
+                for (int i = 0; i < minionLines.Count; i++)
                 {
                     lines[i] += minionLines[i];
                 }

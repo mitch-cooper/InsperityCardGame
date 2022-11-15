@@ -4,28 +4,28 @@ using System.Text;
 
 namespace GameState.GameRules
 {
-    public class GameEvent : ConsoleGameToString, IOwnable
+    public class GameEvent : ConsoleGameToString
     {
-        public int OwnerId { get; }
+        public IOwnable Entity { get; }
         public GameEventType EventType { get; }
         public string Message { get; set; }
 
-        public GameEvent(int ownerId, GameEventType eventType, string message)
+        public GameEvent(IOwnable entity, GameEventType eventType, string message)
         {
-            OwnerId = ownerId;
+            Entity = entity;
             EventType = eventType;
             Message = message;
         }
 
         public override string GameToString()
         {
-            return $"[{GameState.GetPlayer(OwnerId).Name}: {Message}]";
+            return $"[{GameController.GetPlayer(Entity.OwnerId).Name}: {Message}]";
         }
 
-        public override string GameToString(int currentPlayerId)
+        public override string GameToString(Guid currentPlayerId)
         {
-            var ownerName = GameState.GetPlayer(OwnerId).Name;
-            var ownerColor = OwnerId == currentPlayerId ?ConsoleColor.Green : ConsoleColor.Red;
+            var ownerName = GameController.GetPlayer(Entity.OwnerId).Name;
+            var ownerColor = Entity.OwnerId == currentPlayerId ?ConsoleColor.Green : ConsoleColor.Red;
             return $"[{ColorConsole.FormatEmbeddedColor(ownerName, ownerColor)}: {Message}]";
         }
     }
@@ -34,8 +34,11 @@ namespace GameState.GameRules
     {
         TurnStart,
         TurnEnd,
-        CardPlay,
+        MinionPlay,
+        SpellPlay,
         Attack,
-        Death
+        MinionDeath,
+        PlayerDeath,
+        MinionSummon
     }
 }

@@ -12,12 +12,12 @@ namespace GameState.Cards
         public int Health { get; }
         public string Text { get; }
         public Rarity Rarity { get; }
-        public int PlayerId { get; private set; }
+        public Guid PlayerId { get; private set; }
 
-        public Action<int> OnPlay = Constants.DoNothing;
-        public Action<int> OnSummon = Constants.DoNothing;
-        public Action<int> OnDeath = Constants.DoNothing;
-        public Action<int> OnDraw = Constants.DoNothing;
+        public Action<Guid> OnPlay = Constants.DoNothing;
+        public Action<Guid> OnSummon = Constants.DoNothing;
+        public Action<Guid> OnDeath = Constants.DoNothing;
+        public Action<Guid> OnDraw = Constants.DoNothing;
 
         public MinionBuilder(string name, int cost, int attack, int health, string text, Rarity rarity)
         {
@@ -29,31 +29,31 @@ namespace GameState.Cards
             Rarity = rarity;
         }
 
-        public MinionBuilder AddOnPlay(Action<int> action)
+        public MinionBuilder AddOnPlay(Action<Guid> action)
         {
             OnPlay = action;
             return this;
         }
 
-        public MinionBuilder AddOnSummon(Action<int> action)
+        public MinionBuilder AddOnSummon(Action<Guid> action)
         {
             OnSummon = action;
             return this;
         }
 
-        public MinionBuilder AddOnDeath(Action<int> action)
+        public MinionBuilder AddOnDeath(Action<Guid> action)
         {
             OnDeath = action;
             return this;
         }
 
-        public MinionBuilder AddOnDraw(Action<int> action)
+        public MinionBuilder AddOnDraw(Action<Guid> action)
         {
             OnDraw = action;
             return this;
         }
 
-        public Minion Build(int playerId)
+        public Minion Build(Guid playerId)
         {
             PlayerId = playerId;
             return new Minion(this);

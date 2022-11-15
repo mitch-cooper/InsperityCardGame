@@ -9,8 +9,8 @@ namespace InsperityCardGame
     {
         static void Main(string[] args)
         {
-            var player1Id = 1;
-            var player1 = new Player(player1Id, "Player 1", new Deck(new List<Card>()
+            var player1Id = Guid.NewGuid();
+            var player1 = new Player(player1Id, "Player 1", "1", new Deck(new List<Card>()
             {
                 NeutralCards.Employee().Build(player1Id),
                 NeutralCards.Employee().Build(player1Id),
@@ -31,8 +31,8 @@ namespace InsperityCardGame
                 NeutralCards.Boss().Build(player1Id)
             }, player1Id));
 
-            var player2Id = 2;
-            var player2 = new Player(player2Id, "Player 2", new Deck(new List<Card>()
+            var player2Id = Guid.NewGuid();
+            var player2 = new Player(player2Id, "Player 2", "2", new Deck(new List<Card>()
             {
                 NeutralCards.Employee().Build(player2Id),
                 NeutralCards.Employee().Build(player2Id),
@@ -53,7 +53,7 @@ namespace InsperityCardGame
                 NeutralCards.Payroller().Build(player2Id)
             }, player2Id));
 
-            GameState.GameState.StartGame(player1, player2);
+            GameState.GameController.StartGame(player1, player2);
         }
     }
 }

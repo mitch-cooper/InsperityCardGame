@@ -18,22 +18,6 @@ namespace GameState.GameRules
             BaseValue = baseValue;
             CurrentValue = currentValue;
         }
-        //public virtual int SetValue(int value)
-        //{
-        //    SetBaseValue(value);
-        //    SetCurrentValue(value);
-        //    return BaseValue;
-        //}
-        //public virtual int SetBaseValue(int value)
-        //{
-        //    BaseValue = value;
-        //    return BaseValue;
-        //}
-        //public virtual int SetCurrentValue(int value)
-        //{
-        //    CurrentValue = value;
-        //    return CurrentValue;
-        //}
         public abstract int AddToCurrentValue(int valueChange);
         public abstract int AddToBaseValue(int valueChange);
 
@@ -48,7 +32,7 @@ namespace GameState.GameRules
             return ColorConsole.FormatEmbeddedColor(values.Value, values.Color);
         }
 
-        public override string GameToString(int currentPlayerId)
+        public override string GameToString(Guid currentPlayerId)
         {
             return GameToString();
         }
@@ -59,7 +43,7 @@ namespace GameState.GameRules
             ColorConsole.Write(values.Value, values.Color);
         }
 
-        public override void PrintGameToString(int currentPlayerId)
+        public override void PrintGameToString(Guid currentPlayerId)
         {
             PrintGameToString();
         }

@@ -8,21 +8,13 @@ namespace GameState
 {
     public class Minion : BoardCharacter, IConsoleDrawable
     {
-        public int SleepTurnTimer { get; set; }
-        //public Action<int> OnPlay { get; protected set; }
-        //public Action<int> OnDraw { get; protected set; }
-        public Action<int> OnSummon { get; protected set; }
-        public Action<int> OnDeath { get; protected set; }
+        public Action<Guid> OnSummon { get; protected set; }
+        public Action<Guid> OnDeath { get; protected set; }
 
         public Minion(MinionBuilder builder) : base(builder.PlayerId, builder.Name, builder.Text,
             builder.Rarity, builder.Cost, builder.Attack, builder.Health)
         {
-            OnPlay = playerId =>
-            {
-                var player = GameState.GetPlayer(playerId);
-                player.Hand.PlayCard(Id);
-                builder.OnPlay(playerId);
-            };
+            OnPlay = builder.OnPlay;
             OnSummon = playerId =>
             {
                 builder.OnSummon(playerId);
@@ -32,13 +24,20 @@ namespace GameState
             OnDraw = builder.OnDraw;
         }
 
+        protected override void OnDeathEvent()
+        {
+            OnDeath(OwnerId);
+            // TODO: remove from player's board
+            OnCharacterEvent(new GameEvent(this, GameEventType.MinionDeath, $"{Name} died."));
+        }
+
         public List<string> GetDrawToConsoleLines()
         {
             var cah = GetCostAttackHealthForPrint();
             var lines = new List<string>()
             {
                 $" _____ ",
-                $"|{ColorConsole.FormatEmbeddedColor(cah.Cost.Value, cah.Cost.Color).PadRight(2, ' ')}   |",
+                $"|{ColorConsole.FormatEmbeddedColor(cah.Cost.Value.PadRight(2, ' '), cah.Cost.Color)}   |",
                 $"|     |",
                 $"|     |",
                 $"|     |",

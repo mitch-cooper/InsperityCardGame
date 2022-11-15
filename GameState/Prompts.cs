@@ -22,7 +22,7 @@ namespace GameState
             return WantToPlayAgain();
         }
 
-        public static ConsoleKey TurnActions(Dictionary<ConsoleKey, (string Label, Action<int> Callback)> actions)
+        public static ConsoleKey TurnActions(Dictionary<ConsoleKey, (string Label, Guid CallbackParam, Action<Guid> Callback)> actions)
         {
             ColorConsole.WriteLine("Turn Actions: ");
             foreach (var prompt in actions)

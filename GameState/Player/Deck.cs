@@ -18,14 +18,14 @@ namespace GameState
         Card Draw();
     }
 
-    public class Deck : IDeck
+    public class Deck : IDeck, IOwnable
     {
-        public int OwnerId { get; private set; }
+        public Guid OwnerId { get; private set; }
         public List<Card> StartingCards { get; private set; }
         public List<Card> CurrentCards { get; private set; }
         private int FatigueCount = 0;
 
-        public Deck(List<Card> cards, int playerId)
+        public Deck(List<Card> cards, Guid playerId)
         {
             OwnerId = playerId;
             StartingCards = new List<Card>(cards?.Take(Constants.BaseDeckSize));

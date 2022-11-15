@@ -1,10 +1,12 @@
-﻿namespace GameState
+﻿using System;
+
+namespace GameState
 {
     public interface IConsoleGameToString
     {
         string GameToString();
-        string GameToString(int currentPlayerId);
+        string GameToString(Guid currentPlayerId);
         void PrintGameToString();
-        void PrintGameToString(int currentPlayerId);
+        void PrintGameToString(Guid currentPlayerId);
     }
 }

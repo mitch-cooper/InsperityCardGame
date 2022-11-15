@@ -7,11 +7,11 @@ namespace GameState.GameRules
 {
     internal static class TargetMatcher
     {
-        public static List<IBoardItem> GetTargets(int currentPlayerId, TargetCategory baseFilter, Predicate<IBoardItem> filterPredicate = null)
+        public static List<IBoardItem> GetTargets(Guid currentPlayerId, TargetCategory baseFilter, Predicate<IBoardItem> filterPredicate = null)
         {
-            var enemyPlayer = GameState.GetOpponent(currentPlayerId);
+            var enemyPlayer = GameController.GetOpponent(currentPlayerId);
             var enemyMinions = enemyPlayer.Board.GetAllMinions();
-            var player = GameState.GetPlayer(currentPlayerId);
+            var player = GameController.GetPlayer(currentPlayerId);
             var friendlyMinions = player.Board.GetAllMinions();
 
             var targets = new List<IBoardItem>();

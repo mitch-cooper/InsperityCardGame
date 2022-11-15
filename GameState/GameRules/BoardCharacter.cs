@@ -4,13 +4,13 @@ using System.Text;
 
 namespace GameState.GameRules
 {
-    public abstract class BoardCharacter : Card, IBoardItem
+    public abstract class BoardCharacter : Card, IBoardItem, IGameEventEmitter
     {
         public AttackValueState Attack { get; protected set; }
         public HealthValueState Health { get; protected set; }
-        public event EventHandler<int> Died;
         public int AttacksThisTurn { get; set; }
         public int SleepTurnTimer { get; set; }
+        public event IGameEventEmitter.GameEventHandler GameEventTriggered;
 
         protected BoardCharacter() : base()
         {
@@ -20,7 +20,7 @@ namespace GameState.GameRules
             SleepTurnTimer = 1;
         }
 
-        protected BoardCharacter(int ownerId, string name, string text, Rarity rarity, int cost, int attack, int health) : base(ownerId, name, text, rarity, cost)
+        protected BoardCharacter(Guid ownerId, string name, string text, Rarity rarity, int cost, int attack, int health) : base(ownerId, name, text, rarity, cost)
         {
             Attack = new AttackValueState(attack);
             Health = new HealthValueState(health);
@@ -28,9 +28,18 @@ namespace GameState.GameRules
             SleepTurnTimer = 1;
         }
 
-        protected virtual void OnDeath(int playerId)
+        protected void ResetCharacter()
         {
-            Died?.Invoke(this, playerId);
+            GameEventTriggered = null;
+            AttacksThisTurn = 0;
+            SleepTurnTimer = 1;
+        }
+
+        protected abstract void OnDeathEvent();
+
+        protected void OnCharacterEvent(GameEvent gameEvent)
+        {
+            GameEventTriggered?.Invoke(gameEvent);
         }
 
         public void TakeDamage(int value)
@@ -38,9 +47,10 @@ namespace GameState.GameRules
             var newHealth = Health.AddToCurrentValue((int)(value * -1));
             if (newHealth <= 0)
             {
-                OnDeath(OwnerId);
+                OnDeathEvent();
             }
         }
+
         public void RestoreHealth(int value)
         {
             Health.AddToCurrentValue((int)value);
@@ -51,14 +61,14 @@ namespace GameState.GameRules
             return SleepTurnTimer == 0 && AttacksThisTurn == 0 && Attack.CurrentValue > 0;
         }
 
-        public void PromptAttackAndAttack(int playerId)
+        public void PromptAttackAndAttack(Guid playerId)
         {
             AttackBoardItem(PromptAttack(playerId));
         }
 
-        public IBoardItem PromptAttack(int playerId)
+        public IBoardItem PromptAttack(Guid playerId)
         {
-            var targets = GameState.GetOpponent(playerId).Board.GetAttackableTargets();
+            var targets = GameController.GetOpponent(playerId).Board.GetAttackableTargets();
             ColorConsole.WriteLine($"Choose a target to attack: ");
             foreach (var target in targets)
             {
@@ -78,6 +88,9 @@ namespace GameState.GameRules
         {
             unit.TakeDamage(Attack.CurrentValue);
             TakeDamage(unit.Attack.CurrentValue);
+            AttacksThisTurn++;
+            OnCharacterEvent(new GameEvent(this, GameEventType.Attack, $"{Name} attacked {unit.Name}."));
         }
+
     }
 }

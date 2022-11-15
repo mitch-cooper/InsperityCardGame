@@ -11,18 +11,19 @@ namespace GameState
         public List<Card> GetAllCards();
         public List<Card> GetPlayableCards(int coinsAvailable);
         public void AddCard(Card card);
-        public void RemoveCard(string cardName);
+        public void RemoveCard(Guid cardId);
         public void PlayCard(Guid cardId);
         public void ResetHand();
         public void PrintHand();
     }
 
-    public class Hand : IHand, IConsoleDrawable
+    public class Hand : IHand, IGameEventEmitter, IConsoleDrawable, IOwnable
     {
-        public int OwnerId { get; }
+        public Guid OwnerId { get; }
         protected List<Card> Cards { get; private set; }
+        public event IGameEventEmitter.GameEventHandler GameEventTriggered;
 
-        public Hand(int playerId)
+        public Hand(Guid playerId)
         {
             OwnerId = playerId;
             ResetHand();
@@ -43,12 +44,22 @@ namespace GameState
             if (Cards.Count < Constants.MaxHandSize)
             {
                 Cards.Add(card);
+                // TODO: switch on card type
+                switch (card)
+                {
+                    case Minion m:
+                        m.OnDraw(OwnerId);
+                        break;
+                    case Spell s:
+                        s.OnDraw(s, OwnerId);
+                        break;
+                }
             }
         }
 
-        public void RemoveCard(string cardName)
+        public void RemoveCard(Guid cardId)
         {
-            var card = Cards.FirstOrDefault(x => x.Name == cardName);
+            var card = Cards.FirstOrDefault(x => x.CardId == cardId);
             if (card != null)
             {
                 Cards.Remove(card);
@@ -57,21 +68,32 @@ namespace GameState
 
         public void PlayCard(Guid cardId)
         {
-            var cardToPlay = Cards.SingleOrDefault(x => x.Id == cardId);
+            var cardToPlay = Cards.SingleOrDefault(x => x.CardId == cardId);
             if (cardToPlay == null)
             {
                 throw new Exception("Card not in hand");
             }
 
-            switch(cardToPlay)
+            var player = GameController.GetPlayer(cardToPlay.OwnerId);
+            if (cardToPlay.Cost.CurrentValue > player.Coins.CurrentValue)
+            {
+                throw new Exception("Not enough coins");
+            }
+
+            player.Coins.AddToCurrentValue(-1 * cardToPlay.Cost.CurrentValue);
+            switch (cardToPlay)
             {
                 case Minion m:
-                    m.OnPlay(cardToPlay.OwnerId);
-                    //m.
+                    m.OnPlay(m.OwnerId);
+                    RemoveCard(m.CardId);
+                    GameEventTriggered?.Invoke(new GameEvent(this, GameEventType.MinionPlay, $"{m.Name} was played."));
+                    player.Board.SummonMinion(m);
                     break;
                 case Spell s:
+                    s.OnPlay(s, s.OwnerId);
+                    RemoveCard(s.CardId);
+                    GameEventTriggered?.Invoke(new GameEvent(this, GameEventType.SpellPlay, $"{s.Name} was played."));
                     break;
-
             }
         }
 
