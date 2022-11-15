@@ -21,7 +21,8 @@ namespace GameState
     {
         public Guid OwnerId { get; }
         protected List<Card> Cards { get; private set; }
-        public event IGameEventEmitter.GameEventHandler GameEventTriggered;
+        public event IGameEventEmitter.GameEventHandler MinionPlayTriggered;
+        public event IGameEventEmitter.GameEventHandler SpellPlayTriggered;
 
         public Hand(Guid playerId)
         {
@@ -44,7 +45,6 @@ namespace GameState
             if (Cards.Count < Constants.MaxHandSize)
             {
                 Cards.Add(card);
-                // TODO: switch on card type
                 switch (card)
                 {
                     case Minion m:
@@ -86,13 +86,13 @@ namespace GameState
                 case Minion m:
                     m.OnPlay(m.OwnerId);
                     RemoveCard(m.CardId);
-                    GameEventTriggered?.Invoke(new GameEvent(this, GameEventType.MinionPlay, $"{m.Name} was played."));
+                    MinionPlayTriggered?.Invoke(new GameEvent(this, GameEventType.MinionPlay, $"{m.Name} was played."));
                     player.Board.SummonMinion(m);
                     break;
                 case Spell s:
                     s.OnPlay(s, s.OwnerId);
                     RemoveCard(s.CardId);
-                    GameEventTriggered?.Invoke(new GameEvent(this, GameEventType.SpellPlay, $"{s.Name} was played."));
+                    SpellPlayTriggered?.Invoke(new GameEvent(this, GameEventType.SpellPlay, $"{s.Name} was played."));
                     break;
             }
         }
@@ -105,9 +105,9 @@ namespace GameState
         public void PrintHand()
         {
             ColorConsole.WriteLine("Hand: ");
-            foreach (var card in Cards)
+            foreach (var (card, index) in Cards.WithIndex())
             {
-                ColorConsole.WriteEmbeddedColorLine($"\t{card.GameToString()}");
+                ColorConsole.WriteEmbeddedColorLine($"\t{index + 1}: {card.GameToString()}");
             }
         }
 
@@ -151,6 +151,10 @@ namespace GameState
                         if (j == 0)
                         {
                             lines[j] += "___ ";
+                        }
+                        else if (j == 1)
+                        {
+                            lines[j] += $"{Cards.Count}  |";
                         }
                         else if (j < lines.Count - 1)
                         {

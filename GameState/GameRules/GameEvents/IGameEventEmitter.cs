@@ -7,6 +7,5 @@ namespace GameState.GameRules
     public interface IGameEventEmitter
     {
         delegate void GameEventHandler(GameEvent gameEvent);
-        event GameEventHandler GameEventTriggered;
     }
 }

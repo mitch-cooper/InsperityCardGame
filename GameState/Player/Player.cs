@@ -42,7 +42,7 @@ namespace GameState
         }
         protected override void OnDeathEvent()
         {
-            OnCharacterEvent(new GameEvent(this, GameEventType.PlayerDeath, $"{Name} has died."));
+            OnCharacterDeathEvent(new GameEvent(this, GameEventType.PlayerDeath, $"{Name} has died."));
         }
 
         public void PromptTurnActions()
@@ -55,8 +55,10 @@ namespace GameState
                 Hand.PrintHand();
                 var actions = new Dictionary<ConsoleKey, (string Label, Guid CallbackParam, Action<Guid> Callback)>();
 
+                // TODO: change key to match index spot in hand
                 foreach (var (playableCard, index) in Hand.GetPlayableCards(Coins.CurrentValue).WithIndex())
                 {
+                    // TODO: account for board space and minions when card type is minion
                     actions[Constants.HandCardKeys[index]] =
                         ($"Play {playableCard.GameToString()}", playableCard.CardId, Hand.PlayCard);
                 }
@@ -67,6 +69,8 @@ namespace GameState
                         ($"Attack with {attackableMinion.Value.GameToString()}", OwnerId,
                             attackableMinion.Value.PromptAttackAndAttack);
                 }
+
+                // TODO: add option to view event history
 
                 actions.Add(Constants.EndTurnKey, ("End turn", Guid.NewGuid(), (x) => { }));
 
@@ -88,7 +92,8 @@ namespace GameState
         {
             var health = Health.GameToStringValues();
             var attack = Attack.GameToStringValues();
-            var attackText = attack.Value == "0" ? "__" : $"{ColorConsole.FormatEmbeddedColor(attack.Value.PadRight(2, '_'), attack.Color)}";
+            var attackText = attack.Value == "0" ? "__" : ColorConsole.FormatEmbeddedColorPadRight(attack.Value, attack.Color, 2, '_');
+            var healthText = ColorConsole.FormatEmbeddedColorPadLeft(health.Value, health.Color, 2, '_');
             var lines = new List<string>()
             {
                 $"  ___  ",
@@ -96,7 +101,7 @@ namespace GameState
                 $"|     |",
                 $"| P {_displayNumber} |",
                 $"|     |",
-                $"|{attackText}_{ColorConsole.FormatEmbeddedColor(health.Value.PadLeft(2, '_'), health.Color)}|",
+                $"|{attackText}_{healthText}|",
             };
             return lines;
         }

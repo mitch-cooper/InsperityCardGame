@@ -23,5 +23,14 @@ namespace GameState
             if (number.EndsWith("3")) return number + "rd";
             return number + "th";
         }
+
+        public static string RemoveValueAndPadRight(this string value, int paddingNumber, char paddingChar)
+        {
+            return value.PadRight(paddingNumber, paddingChar).Replace(value, "");
+        }
+        public static string RemoveValueAndPadLeft(this string value, int paddingNumber, char paddingChar)
+        {
+            return value.PadLeft(paddingNumber, paddingChar).Replace(value, "");
+        }
     }
 }

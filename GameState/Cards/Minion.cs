@@ -15,20 +15,21 @@ namespace GameState
             builder.Rarity, builder.Cost, builder.Attack, builder.Health)
         {
             OnPlay = builder.OnPlay;
-            OnSummon = playerId =>
-            {
-                builder.OnSummon(playerId);
-                SleepTurnTimer = 1;
-            };
+            OnSummon = builder.OnSummon;
             OnDeath = builder.OnDeath;
             OnDraw = builder.OnDraw;
+        }
+
+        public void Summon()
+        {
+            OnSummon(OwnerId);
+            SleepTurnTimer = 1;
         }
 
         protected override void OnDeathEvent()
         {
             OnDeath(OwnerId);
-            // TODO: remove from player's board
-            OnCharacterEvent(new GameEvent(this, GameEventType.MinionDeath, $"{Name} died."));
+            OnCharacterDeathEvent(new GameEvent(this, GameEventType.MinionDeath, $"{Name} died."));
         }
 
         public List<string> GetDrawToConsoleLines()
@@ -37,11 +38,11 @@ namespace GameState
             var lines = new List<string>()
             {
                 $" _____ ",
-                $"|{ColorConsole.FormatEmbeddedColor(cah.Cost.Value.PadRight(2, ' '), cah.Cost.Color)}   |",
+                $"|{ColorConsole.FormatEmbeddedColorPadRight(cah.Cost.Value, cah.Cost.Color, 2, ' ')}   |",
                 $"|     |",
                 $"|     |",
                 $"|     |",
-                $"|{ColorConsole.FormatEmbeddedColor(cah.Attack.Value.PadRight(2, '_'), cah.Attack.Color)}_{ColorConsole.FormatEmbeddedColor(cah.Health.Value.PadLeft(2, '_'), cah.Health.Color)}|",
+                $"|{ColorConsole.FormatEmbeddedColorPadRight(cah.Attack.Value, cah.Attack.Color, 2, '_')}_{ColorConsole.FormatEmbeddedColorPadLeft(cah.Health.Value, cah.Health.Color, 2, '_')}|",
             };
             return lines;
         }

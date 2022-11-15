@@ -190,6 +190,16 @@ namespace GameState
             return $"[{color}]{text}[/{color}]";
         }
 
+        public static string FormatEmbeddedColorPadLeft(string text, ConsoleColor color, int paddingNumber, char paddingChar)
+        {
+            return $"{text.RemoveValueAndPadLeft(paddingNumber, paddingChar)}[{color}]{text}[/{color}]";
+        }
+
+        public static string FormatEmbeddedColorPadRight(string text, ConsoleColor color, int paddingNumber, char paddingChar)
+        {
+            return $"[{color}]{text}[/{color}]{text.RemoveValueAndPadRight(paddingNumber, paddingChar)}";
+        }
+
         #endregion
     }
 }

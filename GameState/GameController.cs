@@ -36,12 +36,13 @@ namespace GameState
             Player1.ResetPlayer();
             Player2.ResetPlayer();
 
-            Player1.GameEventTriggered += PlayerDied;
-            Player2.GameEventTriggered += PlayerDied;
+            Player1.DeathTriggered += PlayerDied;
+            Player2.DeathTriggered += PlayerDied;
+
+            TurnSystem.ResetTurns(Player1, Player2);
 
             HistoryLog.ResetHistory();
-            TurnSystem.ResetTurns(Player1, Player2);
-            TurnSystem.GameEventTriggered += HistoryLog.AddEvent;
+            SubscribeToAllEvents(HistoryLog.AddEvent);
 
             try
             {
@@ -68,8 +69,11 @@ namespace GameState
 
         private static void PlayerDied(GameEvent gameEvent)
         {
+            PrintGame();
+            ColorConsole.WriteLine(string.Empty);
             var winner = GetOpponent(gameEvent.Entity.OwnerId);
             ColorConsole.WriteWrappedHeader($"{winner.Name} wins!");
+            ColorConsole.WriteLine(string.Empty);
             if (Prompts.WantToPlayAgain())
             {
                 StartGame(Player1, Player2);
@@ -78,6 +82,26 @@ namespace GameState
             {
                 Environment.Exit(0);
             }
+        }
+
+        private static void SubscribeToAllEvents(IGameEventEmitter.GameEventHandler action)
+        {
+            TurnSystem.TurnStartTriggered += action;
+            SubscribePlayerHistoryEvents(Player1, action);
+            SubscribePlayerHistoryEvents(Player2, action);
+        }
+
+        private static void SubscribePlayerHistoryEvents(Player player, IGameEventEmitter.GameEventHandler action)
+        {
+            player.AttackTriggered += action;
+            player.DeathTriggered += action;
+
+            player.Board.MinionSummonTriggered += action;
+            player.Board.MinionDeathTriggered += action;
+            player.Board.MinionAttackTriggered += action;
+
+            player.Hand.MinionPlayTriggered += action;
+            player.Hand.SpellPlayTriggered += action;
         }
 
         public static void PrintGame()

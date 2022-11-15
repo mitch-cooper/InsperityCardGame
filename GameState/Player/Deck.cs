@@ -71,10 +71,10 @@ namespace GameState
 
         public List<string> GetDrawToConsoleLines()
         {
-            var cardCountWithPadding = CurrentCards.Count.ToString().PadLeft(2, ' ');
-            var cardCountDisplay = CurrentCards.Count > 10 ? $"{ColorConsole.FormatEmbeddedColor(cardCountWithPadding, ConsoleColor.Green)}"
-                : CurrentCards.Count > 0 ? $"{ColorConsole.FormatEmbeddedColor(cardCountWithPadding, ConsoleColor.DarkYellow)}"
-                    : $"{ColorConsole.FormatEmbeddedColor(cardCountWithPadding, ConsoleColor.Red)}";
+            var cardCountDisplayColor = CurrentCards.Count > 10 ? ConsoleColor.Green
+                : CurrentCards.Count > 0 ? ConsoleColor.DarkYellow
+                    : ConsoleColor.Red;
+            var cardCountDisplay = ColorConsole.FormatEmbeddedColorPadLeft(CurrentCards.Count.ToString(), cardCountDisplayColor, 2, ' ');
             var maxAdditionalCardsToShowInDeck = 3;
             var deckVisualDisplayTop = new string('_', Math.Min(maxAdditionalCardsToShowInDeck, Math.Max(CurrentCards.Count - 1, 0))).PadLeft(maxAdditionalCardsToShowInDeck, ' ');
             if (CurrentCards.Count <= 1)

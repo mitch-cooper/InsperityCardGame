@@ -22,6 +22,7 @@ namespace GameState
         public static readonly ConsoleKey EndTurnKey = ConsoleKey.E;
         public static readonly ConsoleKey YesKey = ConsoleKey.Y;
         public static readonly ConsoleKey NoKey = ConsoleKey.N;
+        public static readonly ConsoleKey CancelKey = ConsoleKey.C;
 
         public static ReadOnlyCollection<ConsoleKey> HandCardKeys = new ReadOnlyCollection<ConsoleKey>(new List<ConsoleKey>()
         {

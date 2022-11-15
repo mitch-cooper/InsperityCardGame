@@ -10,7 +10,9 @@ namespace GameState
     {
         public Guid OwnerId { get; }
         protected List<Minion> Minions { get; private set; }
-        public event IGameEventEmitter.GameEventHandler GameEventTriggered;
+        public event IGameEventEmitter.GameEventHandler MinionSummonTriggered;
+        public event IGameEventEmitter.GameEventHandler MinionAttackTriggered;
+        public event IGameEventEmitter.GameEventHandler MinionDeathTriggered;
 
         public PlayerBoard(Guid playerId)
         {
@@ -47,6 +49,9 @@ namespace GameState
         public void ResetBoard()
         {
             Minions = new List<Minion>();
+            MinionSummonTriggered = null;
+            MinionAttackTriggered = null;
+            MinionDeathTriggered = null;
         }
 
         public bool HasMaxMinions()
@@ -59,8 +64,21 @@ namespace GameState
             if (!HasMaxMinions())
             {
                 Minions.Add(minion);
-                GameEventTriggered?.Invoke(new GameEvent(minion, GameEventType.MinionSummon, $"{minion.Name} summoned."));
+                minion.Summon();
+                MinionSummonTriggered?.Invoke(new GameEvent(minion, GameEventType.MinionSummon, $"{minion.Name} summoned."));
+                minion.AttackTriggered += (gameEvent) =>
+                {
+                    MinionAttackTriggered?.Invoke(gameEvent);
+                };
+                minion.DeathTriggered += RemoveMinionFromBoard;
             }
+        }
+
+        private void RemoveMinionFromBoard(GameEvent gameEvent)
+        {
+            var minion = (Minion) gameEvent.Entity;
+            Minions.Remove(minion);
+            MinionDeathTriggered?.Invoke(gameEvent);
         }
 
         public List<string> GetDrawToConsoleLines()
