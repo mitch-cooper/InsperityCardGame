@@ -25,7 +25,7 @@ namespace GameState
         public List<Card> CurrentCards { get; private set; }
         private int FatigueCount = 0;
 
-        public Deck(List<Card> cards, Guid playerId)
+        public Deck(Guid playerId, List<Card> cards)
         {
             OwnerId = playerId;
             StartingCards = new List<Card>(cards?.Take(Constants.BaseDeckSize));

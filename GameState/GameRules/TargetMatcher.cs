@@ -5,16 +5,16 @@ using System.Text;
 
 namespace GameState.GameRules
 {
-    internal static class TargetMatcher
+    public static class TargetMatcher
     {
-        public static List<IBoardItem> GetTargets(Guid currentPlayerId, TargetCategory baseFilter, Predicate<IBoardItem> filterPredicate = null)
+        public static Dictionary<ConsoleKey, BoardCharacter> GetTargets(Guid currentPlayerId, TargetCategory targetCategory, Predicate<BoardCharacter> filterPredicate = null)
         {
             var enemyPlayer = GameController.GetOpponent(currentPlayerId);
             var enemyMinions = enemyPlayer.Board.GetAllMinions();
             var player = GameController.GetPlayer(currentPlayerId);
             var friendlyMinions = player.Board.GetAllMinions();
 
-            var targets = new List<IBoardItem>();
+            var targets = new Dictionary<ConsoleKey, BoardCharacter>();
 
             filterPredicate ??= (x => true);
 
@@ -45,28 +45,34 @@ namespace GameState.GameRules
                 TargetCategory.Players
             };
 
-            if (enemyPlayerTargetOptions.Contains(baseFilter) && filterPredicate(enemyPlayer))
+            if (enemyPlayerTargetOptions.Contains(targetCategory) && filterPredicate(enemyPlayer))
             {
-                targets.Add(enemyPlayer);
+                targets.Add(Constants.OpponentPlayerKey, enemyPlayer);
             }
-            if (enemyMinionsTargetOptions.Contains(baseFilter) && enemyMinions.Any(x => filterPredicate(x)))
+            if (enemyMinionsTargetOptions.Contains(targetCategory) && enemyMinions.Any(x => filterPredicate(x)))
             {
-                targets.AddRange(enemyMinions.Where(x => filterPredicate(x)));
+                foreach (var enemyMinion in enemyMinions.Where(x => filterPredicate(x)))
+                {
+                    targets.Add(Constants.OpponentsMinionKeys[enemyMinions.IndexOf(enemyMinion)], enemyMinion);
+                }
             }
-            if (friendlyMinionTargetOptions.Contains(baseFilter) && friendlyMinions.Any(x => filterPredicate(x)))
+            if (friendlyMinionTargetOptions.Contains(targetCategory) && friendlyMinions.Any(x => filterPredicate(x)))
             {
-                targets.AddRange(friendlyMinions.Where(x => filterPredicate(x)));
+                foreach(var friendlyMinion in friendlyMinions.Where(x => filterPredicate(x)))
+                {
+                    targets.Add(Constants.CurrentPlayersMinionKeys[friendlyMinions.IndexOf(friendlyMinion)], friendlyMinion);
+                }
             }
-            if (playerTargetOptions.Contains(baseFilter) && filterPredicate(player))
+            if (playerTargetOptions.Contains(targetCategory) && filterPredicate(player))
             {
-                targets.Add(player);
+                targets.Add(Constants.CurrentPlayerKey, player);
             }
 
             return targets;
         }
     }
 
-    internal enum TargetCategory
+    public enum TargetCategory
     {
         All = 0,
         Enemies,
@@ -74,6 +80,7 @@ namespace GameState.GameRules
         Friends,
         FriendlyMinions,
         Players,
-        Minions
+        Minions,
+        None
     }
 }

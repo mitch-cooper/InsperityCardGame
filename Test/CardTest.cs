@@ -23,7 +23,7 @@ namespace Test
         [TestMethod]
         public void PrintGameToString_DamagedMinion()
         {
-            var sut = NeutralCards.Developer().Build(TheGuid);
+            var sut = BenefitsCards.HSAContributer().Build(TheGuid);
             sut.TakeDamage(1);
 
             sut.PrintGameToString();

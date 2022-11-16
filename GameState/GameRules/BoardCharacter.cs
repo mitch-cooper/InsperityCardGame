@@ -6,6 +6,7 @@ namespace GameState.GameRules
 {
     public abstract class BoardCharacter : Card, IBoardItem, IGameEventEmitter
     {
+        //public new Action</*IBoardItem, */Guid> OnPlay { get; protected set; }
         public AttackValueState Attack { get; protected set; }
         public HealthValueState Health { get; protected set; }
         public int AttacksThisTurn { get; set; }
@@ -21,10 +22,10 @@ namespace GameState.GameRules
             SleepTurnTimer = 1;
         }
 
-        protected BoardCharacter(Guid ownerId, string name, string text, Rarity rarity, int cost, int attack, int health) : base(ownerId, name, text, rarity, cost)
+        protected BoardCharacter(Guid ownerId, string name, string text, Rarity rarity, CostValueState cost, AttackValueState attack, HealthValueState health) : base(ownerId, name, text, rarity, cost)
         {
-            Attack = new AttackValueState(attack);
-            Health = new HealthValueState(health);
+            Attack = attack;
+            Health = health;
             AttacksThisTurn = 0;
             SleepTurnTimer = 1;
         }
@@ -68,7 +69,7 @@ namespace GameState.GameRules
             AttackBoardItem(PromptAttack(playerId));
         }
 
-        public IBoardItem PromptAttack(Guid playerId)
+        public BoardCharacter PromptAttack(Guid playerId)
         {
             var targets = GameController.GetOpponent(playerId).Board.GetAttackableTargets();
             targets.Add(Constants.CancelKey, null);
@@ -90,7 +91,7 @@ namespace GameState.GameRules
             return targets[input.Key];
         }
 
-        public void AttackBoardItem(IBoardItem unit)
+        public void AttackBoardItem(BoardCharacter unit)
         {
             if (unit == null)
             {
@@ -101,6 +102,5 @@ namespace GameState.GameRules
             unit.TakeDamage(Attack.CurrentValue);
             TakeDamage(unit.Attack.CurrentValue);
         }
-
     }
 }

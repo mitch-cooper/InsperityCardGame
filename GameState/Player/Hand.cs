@@ -37,7 +37,10 @@ namespace GameState
 
         public List<Card> GetPlayableCards(int coinsAvailable)
         {
-            return Cards.Where(x => x.Cost.CurrentValue <= coinsAvailable).ToList();
+            var player = GameController.GetPlayer(OwnerId);
+            var boardFull = player.Board.HasMaxMinions();
+            return Cards.Where(x => x.Cost.CurrentValue <= coinsAvailable &&
+                                    (!boardFull || !(x is Minion))).ToList();
         }
 
         public void AddCard(Card card)
@@ -80,7 +83,6 @@ namespace GameState
                 throw new Exception("Not enough coins");
             }
 
-            player.Coins.AddToCurrentValue(-1 * cardToPlay.Cost.CurrentValue);
             switch (cardToPlay)
             {
                 case Minion m:
@@ -90,11 +92,16 @@ namespace GameState
                     player.Board.SummonMinion(m);
                     break;
                 case Spell s:
+                    if (!s.CanProceedWithOnPlay())
+                    {
+                        return;
+                    }
                     s.OnPlay(s, s.OwnerId);
                     RemoveCard(s.CardId);
                     SpellPlayTriggered?.Invoke(new GameEvent(this, GameEventType.SpellPlay, $"{s.Name} was played."));
                     break;
             }
+            player.Coins.AddToCurrentValue(-1 * cardToPlay.Cost.CurrentValue);
         }
 
         public void ResetHand()

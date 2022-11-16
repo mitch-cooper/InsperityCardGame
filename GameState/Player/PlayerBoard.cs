@@ -19,6 +19,7 @@ namespace GameState
             OwnerId = playerId;
             ResetBoard();
         }
+
         public List<Minion> GetAllMinions()
         {
             return Minions;
@@ -34,16 +35,10 @@ namespace GameState
             return new Dictionary<ConsoleKey, Minion>(allMinions.Where(x => x.Value.CanAttack()));
         }
 
-        public Dictionary<ConsoleKey, IBoardItem> GetAttackableTargets()
+        public Dictionary<ConsoleKey, BoardCharacter> GetAttackableTargets()
         {
-            // TODO: implement taunt
-            var boardItems = new Dictionary<ConsoleKey, IBoardItem>();
-            foreach (var (minion, index) in GetAllMinions().WithIndex())
-            {
-                boardItems[Constants.OpponentsMinionKeys[index]] = minion;
-            }
-            boardItems[Constants.OpponentPlayerKey] = GameController.GetPlayer(OwnerId);
-            return boardItems;
+            var boardCharacters = new Dictionary<ConsoleKey, BoardCharacter>();
+            return TargetMatcher.GetTargets(GameController.GetOpponent(OwnerId).OwnerId, TargetCategory.Enemies);
         }
 
         public void ResetBoard()

@@ -54,12 +54,11 @@ namespace GameState
                 PrintPlayersTurnDisplay();
                 Hand.PrintHand();
                 var actions = new Dictionary<ConsoleKey, (string Label, Guid CallbackParam, Action<Guid> Callback)>();
-
-                // TODO: change key to match index spot in hand
-                foreach (var (playableCard, index) in Hand.GetPlayableCards(Coins.CurrentValue).WithIndex())
+                
+                var allCardsInHand = Hand.GetAllCards();
+                foreach (var playableCard in Hand.GetPlayableCards(Coins.CurrentValue))
                 {
-                    // TODO: account for board space and minions when card type is minion
-                    actions[Constants.HandCardKeys[index]] =
+                    actions[Constants.HandCardKeys[allCardsInHand.FindIndex(x => x.CardId == playableCard.CardId)]] =
                         ($"Play {playableCard.GameToString()}", playableCard.CardId, Hand.PlayCard);
                 }
 
@@ -69,8 +68,14 @@ namespace GameState
                         ($"Attack with {attackableMinion.Value.GameToString()}", OwnerId,
                             attackableMinion.Value.PromptAttackAndAttack);
                 }
-
-                // TODO: add option to view event history
+                
+                actions.Add(Constants.EventHistoryKey, ("View history", Guid.NewGuid(), (x) =>
+                {
+                    GameController.HistoryLog.PrintNthEvents(40);
+                    ColorConsole.WriteLine($"\nPress any key to return:");
+                    Console.ReadKey();
+                }
+                ));
 
                 actions.Add(Constants.EndTurnKey, ("End turn", Guid.NewGuid(), (x) => { }));
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using GameState.GameRules;
 
 namespace GameState
 {
@@ -36,6 +37,25 @@ namespace GameState
                 return TurnActions(actions);
             }
             return input.Key;
+        }
+
+        public static BoardCharacter SelectTarget(Guid currentPlayerId, TargetCategory targetCategory,
+            Predicate<BoardCharacter> filterPredicate = null)
+        {
+            var targetDictionary = TargetMatcher.GetTargets(currentPlayerId, targetCategory, filterPredicate);
+            targetDictionary.Add(Constants.CancelKey, null);
+            ColorConsole.WriteLine("Select Target: ");
+            foreach (var prompt in targetDictionary)
+            {
+                ColorConsole.WriteEmbeddedColorLine($"\t{prompt.Key} - {prompt.Value.GameToString(currentPlayerId)}");
+            }
+            var input = Console.ReadKey();
+            if (!targetDictionary.ContainsKey(input.Key))
+            {
+                ColorConsole.WriteLine("Unrecognized input. Try again.");
+                return SelectTarget(currentPlayerId, targetCategory, filterPredicate);
+            }
+            return targetDictionary[input.Key];
         }
     }
 }

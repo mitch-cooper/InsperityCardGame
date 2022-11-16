@@ -8,7 +8,7 @@ namespace GameState
     {
         List<Minion> GetAllMinions();
         Dictionary<ConsoleKey, Minion> GetMinionsThatCanAttack();
-        Dictionary<ConsoleKey, IBoardItem> GetAttackableTargets();
+        Dictionary<ConsoleKey, BoardCharacter> GetAttackableTargets();
         void ResetBoard();
         bool HasMaxMinions();
     }

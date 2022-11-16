@@ -5,7 +5,18 @@ using GameState.GameRules;
 
 namespace GameState
 {
-    public abstract class Card : ConsoleGameToString, IOwnable
+    public interface ICard/*<in T>*/ : IConsoleGameToString, IOwnable
+    {
+        Guid CardId { get; }
+        string Name { get; }
+        string Text { get; }
+        Rarity Rarity { get; }
+        CostValueState Cost { get; }
+        Action</*T, */Guid> OnPlay { get; }
+        Action</*T, */Guid> OnDraw { get; }
+    }
+
+    public abstract class Card : ConsoleGameToString, ICard//<Card>
     {
         public Guid CardId { get; protected set; }
         public Guid OwnerId { get; protected set; }
@@ -13,8 +24,8 @@ namespace GameState
         public string Text { get; protected set; }
         public Rarity Rarity { get; protected set; }
         public CostValueState Cost { get; protected set; }
-        public Action<Guid> OnPlay { get; protected set; }
-        public Action<Guid> OnDraw { get; protected set; }
+        public Action</*Card, */Guid> OnPlay { get; protected set; }
+        public Action</*Card, */Guid> OnDraw { get; protected set; }
 
         protected Card()
         {
@@ -22,16 +33,16 @@ namespace GameState
             Cost = new CostValueState(0);
         }
 
-        protected Card(Guid ownerId, string name, string text, Rarity rarity, int cost) : this()
+        protected Card(Guid ownerId, string name, string text, Rarity rarity, CostValueState cost) : this()
         {
             OwnerId = ownerId;
             Name = name;
             Text = text;
             Rarity = rarity;
-            Cost = new CostValueState(cost);
+            Cost = cost;
         }
 
-        public abstract override string GameToString();
+        //public abstract string GameToString();
 
         public override string GameToString(Guid currentPlayerId)
         {

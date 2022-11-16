@@ -52,15 +52,6 @@ namespace GameState
                     TurnSystem.StartTurn(TurnSystem.GoesSecond);
                 }
             }
-            catch (PlayerDiedException deadPlayer)
-            {
-                var winner = GetOpponent(deadPlayer.PlayerId);
-                ColorConsole.WriteWrappedHeader($"{winner.Name} wins!");
-                if (Prompts.WantToPlayAgain())
-                {
-                    StartGame(Player1, Player2);
-                }
-            }
             catch (Exception ex)
             {
                 Debugger.Break();

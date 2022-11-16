@@ -16,29 +16,5 @@ namespace GameState.Cards.Collection
         {
             return new MinionBuilder("Boss", 4, 4, 5, "", Rarity.Common);
         }
-
-        public static MinionBuilder Developer()
-        {
-            return new MinionBuilder("Developer", 3, 2, 2, "OnPlay: Draw a card.", Rarity.Rare)
-                .AddOnPlay(playerId =>
-                {
-                    var player = GameController.GetPlayer(playerId);
-                    player.Draw();
-                });
-        }
-
-        public static MinionBuilder Payroller()
-        {
-            return new MinionBuilder("Payroller", 6, 3, 4, "OnPlay: Deal 1 damage to all enemies.", Rarity.Epic)
-                .AddOnPlay(playerId =>
-                {
-                    var opponent = GameController.GetOpponent(playerId);
-                    foreach (var enemyMinion in opponent.Board.GetAllMinions())
-                    {
-                        enemyMinion.TakeDamage(1);
-                    }
-                    opponent.TakeDamage(1);
-                });
-        } 
     }
 }

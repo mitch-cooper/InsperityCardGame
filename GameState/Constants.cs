@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using GameState.Cards;
+using GameState.GameRules;
 
 namespace GameState
 {
     public static class Constants
     {
         public static Action<Guid> DoNothing => (playerId) => { };
+        public static Action<IBoardItemCard, Guid> DoNothingBoardItemCard => (builder, playerId) => { };
         public static Action<ISpell, Guid> DoNothingSpell => (builder, playerId) => { };
-        public static Action<MinionBuilder, Guid> DoNothingMinion => (builder, playerId) => { };
 
         public static readonly int BaseDeckSize = 20;
         public static readonly int MaxHandSize = 8;
@@ -23,6 +24,7 @@ namespace GameState
         public static readonly ConsoleKey YesKey = ConsoleKey.Y;
         public static readonly ConsoleKey NoKey = ConsoleKey.N;
         public static readonly ConsoleKey CancelKey = ConsoleKey.C;
+        public static readonly ConsoleKey EventHistoryKey = ConsoleKey.H;
 
         public static ReadOnlyCollection<ConsoleKey> HandCardKeys = new ReadOnlyCollection<ConsoleKey>(new List<ConsoleKey>()
         {
