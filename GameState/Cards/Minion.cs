@@ -29,7 +29,7 @@ namespace GameState
         protected override void OnDeathEvent()
         {
             OnDeath(OwnerId);
-            OnCharacterDeathEvent(new GameEvent(this, GameEventType.MinionDeath, $"{Name} died."));
+            OnCharacterDeathEvent(new GameEvent(this, GameEventType.MinionDeath, $"{Name} has died."));
         }
 
         public List<string> GetDrawToConsoleLines()
@@ -51,7 +51,13 @@ namespace GameState
         {
             var cah = GetCostAttackHealthForPrint();
             var text = !string.IsNullOrWhiteSpace(Text) ? $" {Text}" : string.Empty;
-            return $"[{ColorConsole.FormatEmbeddedColor(Name, (ConsoleColor)Rarity)} ({ColorConsole.FormatEmbeddedColor(cah.Cost.Value, cah.Cost.Color)}/{ColorConsole.FormatEmbeddedColor(cah.Attack.Value, cah.Attack.Color)}/{ColorConsole.FormatEmbeddedColor(cah.Health.Value, cah.Health.Color)}){text}]";
+            return $"[({ColorConsole.FormatEmbeddedColor(cah.Cost.Value, cah.Cost.Color)}) {ColorConsole.FormatEmbeddedColor(Name, (ConsoleColor)Rarity)} ({ColorConsole.FormatEmbeddedColor(cah.Attack.Value, cah.Attack.Color)}/{ColorConsole.FormatEmbeddedColor(cah.Health.Value, cah.Health.Color)}){text}]";
+        }
+
+        public override string GameToString(Guid currentPlayerId)
+        {
+            var ownerPrefix = OwnerId == currentPlayerId ? $"{ColorConsole.FormatEmbeddedColor("Friend", ConsoleColor.Green)}" : $"{ColorConsole.FormatEmbeddedColor("Enemy", ConsoleColor.Red)}";
+            return $"[{ownerPrefix} - {GameToString()}]";
         }
 
         private ((string Value, ConsoleColor Color) Cost, (string Value, ConsoleColor Color) Attack, (string Value, ConsoleColor

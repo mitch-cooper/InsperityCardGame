@@ -10,17 +10,16 @@ namespace GameState
     {
         private readonly string _displayNumber;
 
-        public Player(Guid ownerId, string name, string displayNumber, IDeck deck) : base()
+        public Player(Guid ownerId, string name, string displayNumber, ConsoleColor color, IDeck deck)
+            : base(ownerId, name, string.Empty, Rarity.Legendary, new CostValueState(99),
+                new AttackValueState(0), new HealthValueState(Constants.BasePlayerHealth))
         {
-            OwnerId = ownerId;
-            Name = name;
             _displayNumber = displayNumber;
             Deck = deck;
+            Color = color;
             Hand = new Hand(ownerId);
             Board = new PlayerBoard(ownerId);
             Coins = new CoinValueState(0);
-            Attack = new AttackValueState(0);
-            Health = new HealthValueState(Constants.BasePlayerHealth);
             IsMyTurn = false;
         }
 
@@ -29,6 +28,7 @@ namespace GameState
         public PlayerBoard Board { get; private set; }
         public CoinValueState Coins { get; private set; }
         public bool IsMyTurn { get; set; }
+        public ConsoleColor Color { get; set; }
 
         public void ResetPlayer()
         {
@@ -47,13 +47,13 @@ namespace GameState
 
         public void PromptTurnActions()
         {
-            ConsoleKey actionSelected = ConsoleKey.Spacebar;
+            PlayerInput actionSelected = new PlayerInput(ConsoleKey.Spacebar);
             do
             {
                 GameController.PrintGame();
-                PrintPlayersTurnDisplay();
+                // PrintPlayersTurnDisplay();
                 Hand.PrintHand();
-                var actions = new Dictionary<ConsoleKey, (string Label, Guid CallbackParam, Action<Guid> Callback)>();
+                var actions = new Dictionary<PlayerInput, (string Label, Guid CallbackParam, Action<Guid> Callback)>();
                 
                 var allCardsInHand = Hand.GetAllCards();
                 foreach (var playableCard in Hand.GetPlayableCards(Coins.CurrentValue))
@@ -71,6 +71,7 @@ namespace GameState
                 
                 actions.Add(Constants.EventHistoryKey, ("View history", Guid.NewGuid(), (x) =>
                 {
+                    Console.Clear();
                     GameController.HistoryLog.PrintNthEvents(40);
                     ColorConsole.WriteLine($"\nPress any key to return:");
                     Console.ReadKey();
@@ -81,7 +82,7 @@ namespace GameState
 
                 actionSelected = Prompts.TurnActions(actions);
                 actions[actionSelected].Callback(actions[actionSelected].CallbackParam);
-            } while (actionSelected != Constants.EndTurnKey);
+            } while (!Equals(actionSelected, Constants.EndTurnKey));
         }
         
         public void Draw()
@@ -97,16 +98,16 @@ namespace GameState
         {
             var health = Health.GameToStringValues();
             var attack = Attack.GameToStringValues();
-            var attackText = attack.Value == "0" ? "__" : ColorConsole.FormatEmbeddedColorPadRight(attack.Value, attack.Color, 2, '_');
-            var healthText = ColorConsole.FormatEmbeddedColorPadLeft(health.Value, health.Color, 2, '_');
+            var attackText = attack.Value == "0" ? ColorConsole.FormatEmbeddedColor("__", Color) : ColorConsole.FormatEmbeddedColorPadRight(attack.Value, attack.Color, 2, '_', Color);
+            var healthText = ColorConsole.FormatEmbeddedColorPadLeft(health.Value, health.Color, 2, '_', Color);
             var lines = new List<string>()
             {
-                $"  ___  ",
-                $" /   \\ ",
-                $"|     |",
-                $"| P {_displayNumber} |",
-                $"|     |",
-                $"|{attackText}_{healthText}|",
+                ColorConsole.FormatEmbeddedColor($"  ___  ", Color),
+                ColorConsole.FormatEmbeddedColor($" /   \\ ", Color),
+                ColorConsole.FormatEmbeddedColor($"|     |", Color),
+                ColorConsole.FormatEmbeddedColor($"| P {_displayNumber} |", Color),
+                ColorConsole.FormatEmbeddedColor($"|     |", Color),
+                $"{ColorConsole.FormatEmbeddedColor("|", Color)}{attackText}{ColorConsole.FormatEmbeddedColor("_", Color)}{healthText}{ColorConsole.FormatEmbeddedColor("|", Color)}",
             };
             return lines;
         }
@@ -119,22 +120,33 @@ namespace GameState
             return lines;
         }
 
+        public string GetNameColorFormatted()
+        {
+            return ColorConsole.FormatEmbeddedColor(Name, Color);
+        }
+
         public override string GameToString()
         {
             var health = Health.GameToStringValues();
             var attack = Attack.GameToStringValues();
             var attackText = attack.Value == "0" ? string.Empty : $"{ColorConsole.FormatEmbeddedColor(attack.Value, attack.Color)}/";
-            return $"[{Name} ({attackText}{ColorConsole.FormatEmbeddedColor(health.Value, health.Color)})]";
+            return $"[{GetNameColorFormatted()} ({attackText}{ColorConsole.FormatEmbeddedColor(health.Value, health.Color)})]";
+        }
+
+        public override string GameToString(Guid currentPlayerId)
+        {
+            var ownerPrefix = OwnerId == currentPlayerId ? $"{ColorConsole.FormatEmbeddedColor("Friend", ConsoleColor.Green)}" : $"{ColorConsole.FormatEmbeddedColor("Enemy", ConsoleColor.Red)}";
+            return $"[{ownerPrefix} - {GameToString()}]";
         }
 
         public void PrintPlayersTurnDisplay()
         {
             var spacerLength = 25;
-            ColorConsole.WriteLine(" _,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,_ ");
-            ColorConsole.WriteLine($"|                                                                  |");
-            ColorConsole.WriteLine($"|{new string(' ', spacerLength)}{ Name }'s Turn {new string(' ', spacerLength)}|");
-            ColorConsole.WriteLine($"|                                                                  |");
-            ColorConsole.WriteLine("|_,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,_|");
+            ColorConsole.WriteEmbeddedColorLine(" _,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,_ ", Color);
+            ColorConsole.WriteEmbeddedColorLine($"|                                                                  |", Color);
+            ColorConsole.WriteEmbeddedColorLine($"|{new string(' ', spacerLength)}{ Name }'s Turn {new string(' ', spacerLength)}|", Color);
+            ColorConsole.WriteEmbeddedColorLine($"|                                                                  |", Color);
+            ColorConsole.WriteEmbeddedColorLine("|_,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,_|", Color);
         }
 
     }

@@ -27,14 +27,9 @@ namespace GameState
         public Action</*Card, */Guid> OnPlay { get; protected set; }
         public Action</*Card, */Guid> OnDraw { get; protected set; }
 
-        protected Card()
+        protected Card(Guid ownerId, string name, string text, Rarity rarity, CostValueState cost)
         {
             CardId = Guid.NewGuid();
-            Cost = new CostValueState(0);
-        }
-
-        protected Card(Guid ownerId, string name, string text, Rarity rarity, CostValueState cost) : this()
-        {
             OwnerId = ownerId;
             Name = name;
             Text = text;
@@ -42,12 +37,12 @@ namespace GameState
             Cost = cost;
         }
 
-        //public abstract string GameToString();
+        public abstract override string GameToString();
 
         public override string GameToString(Guid currentPlayerId)
         {
             var ownerPrefix = OwnerId == currentPlayerId ? $"{ColorConsole.FormatEmbeddedColor("Friend", ConsoleColor.Green)}" : $"{ColorConsole.FormatEmbeddedColor("Enemy", ConsoleColor.Red)}";
-            return $"[{ownerPrefix} - {GameToString().TrimStart('[').TrimEnd(']')}]";
+            return $"[{ownerPrefix} - {GameToString()}]";
         }
     }
 

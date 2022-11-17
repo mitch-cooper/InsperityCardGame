@@ -11,7 +11,6 @@ namespace GameState.GameRules
         void TakeDamage(int value);
         void RestoreHealth(int value);
         void PromptAttackAndAttack(Guid playerId);
-        BoardCharacter PromptAttack(Guid playerId);
         void AttackBoardItem(BoardCharacter unit);
     }
 }

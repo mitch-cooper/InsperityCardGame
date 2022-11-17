@@ -87,7 +87,7 @@ namespace GameState
             player.AttackTriggered += action;
             player.DeathTriggered += action;
 
-            player.Board.MinionSummonTriggered += action;
+            //player.Board.MinionSummonTriggered += action;
             player.Board.MinionDeathTriggered += action;
             player.Board.MinionAttackTriggered += action;
 
@@ -104,22 +104,24 @@ namespace GameState
             ColorConsole.WriteLine(string.Empty);
             HistoryLog.PrintNthEvents(3);
             ColorConsole.WriteLine(string.Empty);
-            ColorConsole.WriteLine(string.Empty);
         }
 
         private static void PrintDivider()
         {
             var colCount = 70;
+            var currentPlayersTurn = TurnSystem.CurrentTurnsPlayer;
             var lines = new List<string>()
             {
                 new string('_', colCount),
-                "___|___|___|___|___|___|___|___|___|___|___|___|___|___|___|___|___|__",
+                "___|___|___|___|___|_                     _|___|___|___|___|___|___|__",
+                $"_|___|___|___|___|___|  {currentPlayersTurn.Name}'s Turn  |___|___|___|___|___|___|___|",
+                "___|___|___|___|___|_______________________|___|___|___|___|___|___|__",
                 new string(' ', colCount)
             };
 
             foreach (var line in lines)
             {
-                ColorConsole.WriteEmbeddedColorLine(line);
+                ColorConsole.WriteEmbeddedColorLine(ColorConsole.FormatEmbeddedColor(line, currentPlayersTurn.Color));
             }
         }
 

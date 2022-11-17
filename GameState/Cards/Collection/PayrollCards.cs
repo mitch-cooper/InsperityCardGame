@@ -25,7 +25,7 @@ namespace GameState.Cards.Collection
 
         public static SpellBuilder Paycheck()
         {
-            return new SpellBuilder("Paycheck", 0, "Gain 1 coin this turn for each friendly minion.", Rarity.Common)
+            return new SpellBuilder("Paycheck", 0, "Gain 1 Coin this turn for each friendly minion.", Rarity.Common)
                 .AddSpellType(SpellType.Business)
                 .AddOnPlay((spell, playerId) =>
                 {

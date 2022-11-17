@@ -13,16 +13,9 @@ namespace GameState.GameRules
         public int SleepTurnTimer { get; set; }
         public event IGameEventEmitter.GameEventHandler DeathTriggered;
         public event IGameEventEmitter.GameEventHandler AttackTriggered;
-
-        protected BoardCharacter() : base()
-        {
-            Attack = new AttackValueState(0);
-            Health = new HealthValueState(0);
-            AttacksThisTurn = 0;
-            SleepTurnTimer = 1;
-        }
-
-        protected BoardCharacter(Guid ownerId, string name, string text, Rarity rarity, CostValueState cost, AttackValueState attack, HealthValueState health) : base(ownerId, name, text, rarity, cost)
+        
+        protected BoardCharacter(Guid ownerId, string name, string text, Rarity rarity, CostValueState cost, AttackValueState attack, HealthValueState health)
+            : base(ownerId, name, text, rarity, cost)
         {
             Attack = attack;
             Health = health;
@@ -66,29 +59,7 @@ namespace GameState.GameRules
 
         public void PromptAttackAndAttack(Guid playerId)
         {
-            AttackBoardItem(PromptAttack(playerId));
-        }
-
-        public BoardCharacter PromptAttack(Guid playerId)
-        {
-            var targets = GameController.GetOpponent(playerId).Board.GetAttackableTargets();
-            targets.Add(Constants.CancelKey, null);
-            ColorConsole.WriteLine($"Choose a target to attack: ");
-            foreach (var target in targets)
-            {
-                ColorConsole.WriteEmbeddedColorLine(target.Key == Constants.CancelKey
-                    ? $"\t{target.Key} - Cancel attack"
-                    : $"\t{target.Key} - {target.Value}");
-            }
-
-            var input = Console.ReadKey();
-            if (!targets.ContainsKey(input.Key))
-            {
-                ColorConsole.WriteLine("Unrecognized input. Try again.");
-                return PromptAttack(playerId);
-            }
-            
-            return targets[input.Key];
+            AttackBoardItem(Prompts.SelectAttackTarget(playerId));
         }
 
         public void AttackBoardItem(BoardCharacter unit)

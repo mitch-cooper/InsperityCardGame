@@ -20,44 +20,44 @@ namespace GameState
         public static readonly int BasePlayerHealth = 25;
 
         #region Keys
-        public static readonly ConsoleKey EndTurnKey = ConsoleKey.E;
-        public static readonly ConsoleKey YesKey = ConsoleKey.Y;
-        public static readonly ConsoleKey NoKey = ConsoleKey.N;
-        public static readonly ConsoleKey CancelKey = ConsoleKey.C;
-        public static readonly ConsoleKey EventHistoryKey = ConsoleKey.H;
+        public static readonly PlayerInput EndTurnKey = new PlayerInput(ConsoleKey.E);
+        public static readonly PlayerInput YesKey = new PlayerInput(ConsoleKey.Y);
+        public static readonly PlayerInput NoKey = new PlayerInput(ConsoleKey.N);
+        public static readonly PlayerInput CancelKey = new PlayerInput(ConsoleKey.C);
+        public static readonly PlayerInput EventHistoryKey = new PlayerInput(ConsoleKey.H);
 
-        public static ReadOnlyCollection<ConsoleKey> HandCardKeys = new ReadOnlyCollection<ConsoleKey>(new List<ConsoleKey>()
+        public static ReadOnlyCollection<PlayerInput> HandCardKeys = new ReadOnlyCollection<PlayerInput>(new List<PlayerInput>()
         {
-            ConsoleKey.D1,
-            ConsoleKey.D2,
-            ConsoleKey.D3,
-            ConsoleKey.D4,
-            ConsoleKey.D5,
-            ConsoleKey.D6,
-            ConsoleKey.D7,
-            ConsoleKey.D8
+            new PlayerInput(ConsoleKey.D1, "1"),
+            new PlayerInput(ConsoleKey.D2, "2"),
+            new PlayerInput(ConsoleKey.D3, "3"),
+            new PlayerInput(ConsoleKey.D4, "4"),
+            new PlayerInput(ConsoleKey.D5, "5"),
+            new PlayerInput(ConsoleKey.D6, "6"),
+            new PlayerInput(ConsoleKey.D7, "7"),
+            new PlayerInput(ConsoleKey.D8, "8")
         });
 
-        public static readonly ConsoleKey CurrentPlayerKey = ConsoleKey.P;
-        public static ReadOnlyCollection<ConsoleKey> CurrentPlayersMinionKeys = new ReadOnlyCollection<ConsoleKey>(new List<ConsoleKey>()
+        public static readonly PlayerInput CurrentPlayerKey = new PlayerInput(ConsoleKey.P);
+        public static ReadOnlyCollection<PlayerInput> CurrentPlayersMinionKeys = new ReadOnlyCollection<PlayerInput>(new List<PlayerInput>()
         {
-            ConsoleKey.F1,
-            ConsoleKey.F2,
-            ConsoleKey.F3,
-            ConsoleKey.F4,
-            ConsoleKey.F5,
-            ConsoleKey.F6
+            new PlayerInput(ConsoleKey.F1),
+            new PlayerInput(ConsoleKey.F2),
+            new PlayerInput(ConsoleKey.F3),
+            new PlayerInput(ConsoleKey.F4),
+            new PlayerInput(ConsoleKey.F5),
+            new PlayerInput(ConsoleKey.F6)
         });
 
-        public static readonly ConsoleKey OpponentPlayerKey = ConsoleKey.O;
-        public static ReadOnlyCollection<ConsoleKey> OpponentsMinionKeys = new ReadOnlyCollection<ConsoleKey>(new List<ConsoleKey>()
+        public static readonly PlayerInput OpponentPlayerKey = new PlayerInput(ConsoleKey.O);
+        public static ReadOnlyCollection<PlayerInput> OpponentsMinionKeys = new ReadOnlyCollection<PlayerInput>(new List<PlayerInput>()
         {
-            ConsoleKey.F7,
-            ConsoleKey.F8,
-            ConsoleKey.F9,
-            ConsoleKey.F10,
-            ConsoleKey.F11,
-            ConsoleKey.F12
+            new PlayerInput(ConsoleKey.F7),
+            new PlayerInput(ConsoleKey.F8),
+            new PlayerInput(ConsoleKey.F9),
+            new PlayerInput(ConsoleKey.F10),
+            new PlayerInput(ConsoleKey.OemPlus, "+"),
+            new PlayerInput(ConsoleKey.F12)
         });
 
         #endregion

@@ -7,14 +7,14 @@ namespace GameState.GameRules
 {
     public static class TargetMatcher
     {
-        public static Dictionary<ConsoleKey, BoardCharacter> GetTargets(Guid currentPlayerId, TargetCategory targetCategory, Predicate<BoardCharacter> filterPredicate = null)
+        public static Dictionary<PlayerInput, BoardCharacter> GetTargets(Guid currentPlayerId, TargetCategory targetCategory, Predicate<BoardCharacter> filterPredicate = null)
         {
             var enemyPlayer = GameController.GetOpponent(currentPlayerId);
             var enemyMinions = enemyPlayer.Board.GetAllMinions();
             var player = GameController.GetPlayer(currentPlayerId);
             var friendlyMinions = player.Board.GetAllMinions();
 
-            var targets = new Dictionary<ConsoleKey, BoardCharacter>();
+            var targets = new Dictionary<PlayerInput, BoardCharacter>();
 
             filterPredicate ??= (x => true);
 

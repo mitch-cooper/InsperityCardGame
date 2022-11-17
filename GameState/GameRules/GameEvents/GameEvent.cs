@@ -19,14 +19,13 @@ namespace GameState.GameRules
 
         public override string GameToString()
         {
-            return $"[{GameController.GetPlayer(Entity.OwnerId).Name}: {Message}]";
+            var owner = GameController.GetPlayer(Entity.OwnerId);
+            return $"[{ColorConsole.FormatEmbeddedColor(owner.Name, owner.Color)}: {Message}]";
         }
 
         public override string GameToString(Guid currentPlayerId)
         {
-            var ownerName = GameController.GetPlayer(Entity.OwnerId).Name;
-            var ownerColor = Entity.OwnerId == currentPlayerId ?ConsoleColor.Green : ConsoleColor.Red;
-            return $"[{ColorConsole.FormatEmbeddedColor(ownerName, ownerColor)}: {Message}]";
+            return GameToString();
         }
     }
 

@@ -6,6 +6,7 @@ namespace GameState.GameRules
 {
     public abstract class ValueState : ConsoleGameToString
     {
+        public int OriginalBaseValue { get; }
         public int BaseValue { get; protected set; }
         public int CurrentValue { get; protected set; }
 
@@ -17,6 +18,7 @@ namespace GameState.GameRules
         {
             BaseValue = baseValue;
             CurrentValue = currentValue;
+            OriginalBaseValue = baseValue;
         }
         public abstract int AddToCurrentValue(int valueChange);
         public abstract int AddToBaseValue(int valueChange);

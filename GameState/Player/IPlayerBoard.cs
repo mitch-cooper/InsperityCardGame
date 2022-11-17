@@ -7,8 +7,8 @@ namespace GameState
     public interface IPlayerBoard
     {
         List<Minion> GetAllMinions();
-        Dictionary<ConsoleKey, Minion> GetMinionsThatCanAttack();
-        Dictionary<ConsoleKey, BoardCharacter> GetAttackableTargets();
+        Dictionary<PlayerInput, Minion> GetMinionsThatCanAttack();
+        Dictionary<PlayerInput, BoardCharacter> GetAttackableTargets();
         void ResetBoard();
         bool HasMaxMinions();
     }

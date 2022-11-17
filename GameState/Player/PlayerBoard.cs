@@ -25,19 +25,18 @@ namespace GameState
             return Minions;
         }
 
-        public Dictionary<ConsoleKey, Minion> GetMinionsThatCanAttack()
+        public Dictionary<PlayerInput, Minion> GetMinionsThatCanAttack()
         {
-            var allMinions = new Dictionary<ConsoleKey, Minion>();
+            var allMinions = new Dictionary<PlayerInput, Minion>();
             foreach (var (minion, index) in GetAllMinions().WithIndex())
             {
                 allMinions[Constants.CurrentPlayersMinionKeys[index]] = minion;
             }
-            return new Dictionary<ConsoleKey, Minion>(allMinions.Where(x => x.Value.CanAttack()));
+            return new Dictionary<PlayerInput, Minion>(allMinions.Where(x => x.Value.CanAttack()));
         }
 
-        public Dictionary<ConsoleKey, BoardCharacter> GetAttackableTargets()
+        public Dictionary<PlayerInput, BoardCharacter> GetAttackableTargets()
         {
-            var boardCharacters = new Dictionary<ConsoleKey, BoardCharacter>();
             return TargetMatcher.GetTargets(GameController.GetOpponent(OwnerId).OwnerId, TargetCategory.Enemies);
         }
 
@@ -60,7 +59,7 @@ namespace GameState
             {
                 Minions.Add(minion);
                 minion.Summon();
-                MinionSummonTriggered?.Invoke(new GameEvent(minion, GameEventType.MinionSummon, $"{minion.Name} summoned."));
+                MinionSummonTriggered?.Invoke(new GameEvent(minion, GameEventType.MinionSummon, $"{minion.Name} was summoned."));
                 minion.AttackTriggered += (gameEvent) =>
                 {
                     MinionAttackTriggered?.Invoke(gameEvent);

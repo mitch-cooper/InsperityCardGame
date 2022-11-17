@@ -16,14 +16,8 @@ namespace GameState
         public List<int> SpellValues { get; protected set; }
         public SpellType Type { get; protected set; }
 
-        public Spell(SpellBuilder builder)
+        public Spell(SpellBuilder builder) : base(builder.OwnerId, builder.Name, builder.Text, builder.Rarity, builder.Cost)
         {
-            OwnerId = builder.OwnerId;
-            Name = builder.Name;
-            Cost = builder.Cost;
-            Text = builder.Text;
-            Rarity = builder.Rarity;
-
             SpellValues = builder.SpellValues ?? new List<int>();
             Type = builder.Type;
             OnPlay = builder.OnPlay;
@@ -36,8 +30,7 @@ namespace GameState
         public override string GameToString()
         {
             var cost = Cost.GameToStringValues();
-            return
-                $"[{ColorConsole.FormatEmbeddedColor(Name, (ConsoleColor) Rarity)} ({ColorConsole.FormatEmbeddedColor(cost.Value, cost.Color)}) {DisplayText}]";
+            return $"[({ColorConsole.FormatEmbeddedColor(cost.Value, cost.Color)}) {ColorConsole.FormatEmbeddedColor(Name, (ConsoleColor) Rarity)} {DisplayText}]";
         }
 
         public bool CanProceedWithOnPlay()

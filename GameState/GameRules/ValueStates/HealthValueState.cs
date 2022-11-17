@@ -4,12 +4,14 @@ namespace GameState.GameRules
 {
     public class HealthValueState : ValueState
     {
+        private readonly int _originalBaseValue;
         public HealthValueState(int value) : base(value)
         {
         }
 
         public HealthValueState(int baseValue, int currentValue) : base(baseValue, currentValue)
         {
+            _originalBaseValue = baseValue;
         }
 
         public override int AddToCurrentValue(int valueChange)
@@ -52,7 +54,7 @@ namespace GameState.GameRules
             {
                 color = ConsoleColor.DarkRed;
             }
-            if (BaseValue < CurrentValue)
+            if (OriginalBaseValue < BaseValue && BaseValue == CurrentValue)
             {
                 color = ConsoleColor.DarkGreen;
             }

@@ -13,8 +13,6 @@ namespace GameState
         }
         public static List<string> FormatCoinsDrawToConsoleLines(int availableCoins, int spentCoins)
         {
-
-
             var lines = new List<string>()
             {
                 $"Coins:{ColorConsole.FormatEmbeddedColorPadLeft(availableCoins.ToString(), availableCoins > 0 ? ConsoleColor.DarkGreen : ConsoleColor.DarkRed, 2, ' ')}",
@@ -39,7 +37,7 @@ namespace GameState
                 }
                 else
                 {
-                    firstReplace = ColorConsole.FormatEmbeddedColor("_", ConsoleColor.DarkGray);
+                    firstReplace = ColorConsole.FormatEmbeddedColor("_", ConsoleColor.White);
                 }
 
                 var secondReplace = string.Empty;
@@ -55,7 +53,7 @@ namespace GameState
                 }
                 else
                 {
-                    secondReplace = ColorConsole.FormatEmbeddedColor("_", ConsoleColor.DarkGray);
+                    secondReplace = ColorConsole.FormatEmbeddedColor("_", ConsoleColor.White);
                 }
 
                 lines[i] = string.Format(lines[i], firstReplace, secondReplace);

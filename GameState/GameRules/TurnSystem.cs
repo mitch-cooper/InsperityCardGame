@@ -12,6 +12,7 @@ namespace GameState.GameRules
         public int TurnCount { get; private set; } = 0;
         public Player GoesFirst { get; private set; }
         public Player GoesSecond { get; private set; }
+        public Player CurrentTurnsPlayer { get; private set; }
         public event IGameEventEmitter.GameEventHandler TurnStartTriggered;
         public event IGameEventEmitter.GameEventHandler TurnEndTriggered;
 
@@ -43,7 +44,8 @@ namespace GameState.GameRules
 
         public void StartTurn(Player player)
         {
-            if(player.OwnerId == GoesFirst.OwnerId) TurnCount++;
+            CurrentTurnsPlayer = player;
+            if (player.OwnerId == GoesFirst.OwnerId) TurnCount++;
             player.IsMyTurn = true;
             player.Draw();
             player.Coins.AddToBaseValue(1);
@@ -51,7 +53,7 @@ namespace GameState.GameRules
             var minions = player.Board.GetAllMinions().ToList();
             minions.ForEach(x => x.AttacksThisTurn = 0);
 
-            TurnStartTriggered?.Invoke(new GameEvent(player, GameEventType.TurnStart, $"{player.Name}'s {TurnCount.GetOrdinalSuffix()} turn has started."));
+            TurnStartTriggered?.Invoke(new GameEvent(player, GameEventType.TurnStart, $"{TurnCount.GetOrdinalSuffix()} turn has started."));
 
             player.PromptTurnActions();
 
@@ -64,7 +66,7 @@ namespace GameState.GameRules
             var minions = player.Board.GetAllMinions().Where(x => x.SleepTurnTimer > 0).ToList();
             minions.ForEach(x => x.SleepTurnTimer--);
 
-            TurnEndTriggered?.Invoke(new GameEvent(player, GameEventType.TurnEnd, $"{player.Name}'s {TurnCount.GetOrdinalSuffix()} turn has ended."));
+            TurnEndTriggered?.Invoke(new GameEvent(player, GameEventType.TurnEnd, $"{TurnCount.GetOrdinalSuffix()} turn has ended."));
         }
     }
 }
