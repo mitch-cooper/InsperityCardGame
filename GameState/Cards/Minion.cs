@@ -35,14 +35,18 @@ namespace GameState
         public List<string> GetDrawToConsoleLines()
         {
             var cah = GetCostAttackHealthForPrint();
+            var borderColor = (ConsoleColor)Rarity;
+            var cost = ColorConsole.FormatEmbeddedColorPadRight(cah.Cost.Value, cah.Cost.Color, 2, ' ', borderColor);
+            var attack = ColorConsole.FormatEmbeddedColorPadRight(cah.Attack.Value, cah.Attack.Color, 3, '_', borderColor);
+            var health = ColorConsole.FormatEmbeddedColorPadLeft(cah.Health.Value, cah.Health.Color, 2, '_', borderColor);
             var lines = new List<string>()
             {
-                $" _____ ",
-                $"|{ColorConsole.FormatEmbeddedColorPadRight(cah.Cost.Value, cah.Cost.Color, 2, ' ')}   |",
-                $"|     |",
-                $"|     |",
-                $"|     |",
-                $"|{ColorConsole.FormatEmbeddedColorPadRight(cah.Attack.Value, cah.Attack.Color, 2, '_')}_{ColorConsole.FormatEmbeddedColorPadLeft(cah.Health.Value, cah.Health.Color, 2, '_')}|",
+                ColorConsole.FormatEmbeddedColor($" _____ ", borderColor),
+                $"{ColorConsole.FormatEmbeddedColor("|", borderColor)}{cost}{ColorConsole.FormatEmbeddedColor("   |", borderColor)}",
+                ColorConsole.FormatEmbeddedColor($"|     |", borderColor),
+                ColorConsole.FormatEmbeddedColor($"|     |", borderColor),
+                ColorConsole.FormatEmbeddedColor($"|     |", borderColor),
+                $"{ColorConsole.FormatEmbeddedColor("|", borderColor)}{attack}{health}{ColorConsole.FormatEmbeddedColor("|", borderColor)}"
             };
             return lines;
         }

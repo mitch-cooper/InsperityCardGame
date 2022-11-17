@@ -33,6 +33,12 @@ namespace GameState
             return $"[({ColorConsole.FormatEmbeddedColor(cost.Value, cost.Color)}) {ColorConsole.FormatEmbeddedColor(Name, (ConsoleColor) Rarity)} {DisplayText}]";
         }
 
+        public bool HasAvailableTargets()
+        {
+            return TargetingParams.Category == TargetCategory.None
+                   || TargetMatcher.GetTargets(OwnerId, TargetingParams.Category, TargetingParams.Filter).Count != 0;
+        }
+
         public bool CanProceedWithOnPlay()
         {
             if (TargetingParams.Category == TargetCategory.None)

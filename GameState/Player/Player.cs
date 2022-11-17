@@ -51,12 +51,11 @@ namespace GameState
             do
             {
                 GameController.PrintGame();
-                // PrintPlayersTurnDisplay();
                 Hand.PrintHand();
                 var actions = new Dictionary<PlayerInput, (string Label, Guid CallbackParam, Action<Guid> Callback)>();
                 
                 var allCardsInHand = Hand.GetAllCards();
-                foreach (var playableCard in Hand.GetPlayableCards(Coins.CurrentValue))
+                foreach (var playableCard in Hand.GetPlayableCards())
                 {
                     actions[Constants.HandCardKeys[allCardsInHand.FindIndex(x => x.CardId == playableCard.CardId)]] =
                         ($"Play {playableCard.GameToString()}", playableCard.CardId, Hand.PlayCard);
@@ -88,10 +87,13 @@ namespace GameState
         public void Draw()
         {
             var card = Deck.Draw();
-            if (Hand.GetAllCards().Count < Constants.MaxHandSize)
-            {
-                Hand.AddCard(card);
-            }
+            Hand.DrawCard(card);
+        }
+
+        public void AddCardFromDeckToHand()
+        {
+            var card = Deck.Draw();
+            Hand.AddCard(card);
         }
 
         public List<string> GetDrawToConsoleLines()

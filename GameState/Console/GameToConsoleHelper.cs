@@ -15,7 +15,7 @@ namespace GameState
         {
             var lines = new List<string>()
             {
-                $"Coins:{ColorConsole.FormatEmbeddedColorPadLeft(availableCoins.ToString(), availableCoins > 0 ? ConsoleColor.DarkGreen : ConsoleColor.DarkRed, 2, ' ')}",
+                $"Coins:{ColorConsole.FormatEmbeddedColorPadLeft(availableCoins.ToString(), availableCoins > 0 ? ConsoleColor.Green : ConsoleColor.DarkRed, 2, ' ')}",
                 "| {0}  {1} |",
                 "| {0}  {1} |",
                 "| {0}  {1} |",

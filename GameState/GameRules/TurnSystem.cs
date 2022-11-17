@@ -31,14 +31,14 @@ namespace GameState.GameRules
             GoesFirst = randomNumber == 1 ? player1 : player2;
             GoesSecond = randomNumber == 1 ? player2 : player1;
 
-            GoesFirst.Draw();
-            GoesFirst.Draw();
-            GoesFirst.Draw();
+            GoesFirst.AddCardFromDeckToHand();
+            GoesFirst.AddCardFromDeckToHand();
+            GoesFirst.AddCardFromDeckToHand();
 
-            GoesSecond.Draw();
-            GoesSecond.Draw();
-            GoesSecond.Draw();
-            GoesSecond.Draw();
+            GoesSecond.AddCardFromDeckToHand();
+            GoesSecond.AddCardFromDeckToHand();
+            GoesSecond.AddCardFromDeckToHand();
+            GoesSecond.AddCardFromDeckToHand();
             GoesSecond.Hand.AddCard(NonCollectibleCards.Money().Build(GoesSecond.OwnerId));
         }
 

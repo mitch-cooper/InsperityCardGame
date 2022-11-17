@@ -134,7 +134,7 @@ namespace GameState
             var linesCoinsPlayerHand = GameToConsoleHelper.InitializeListWithValue("", Math.Min(coins.Count, Math.Min(playerLines.Count, hand.Count)));
             for(var i = 0; i < linesCoinsPlayerHand.Count; i++)
             {
-                var spaces = new string(' ', spaceBaseValue - 16 - hand[i].Length / 2);
+                var spaces = new string(' ', spaceBaseValue - 13 - player.Hand.GetAllCards().Count * 2);
                 linesCoinsPlayerHand[i] = $"{coins[i]}{new string(' ', spaceBaseValue / 2)}{playerLines[i]}{spaces}{hand[i]}{spaces}";
             }
 
