@@ -127,14 +127,14 @@ namespace GameState
 
         private static void PrintPlayer(Player player, bool isTopOfScreen)
         {
-            var spaceBaseValue = 37;
+            var spaceBaseValue = 35;
             var coins = player.GetCoinsDrawToConsoleLines();
             var playerLines = player.GetDrawToConsoleLines();
             var hand = player.Hand.GetDrawToConsoleLines();
             var linesCoinsPlayerHand = GameToConsoleHelper.InitializeListWithValue("", Math.Min(coins.Count, Math.Min(playerLines.Count, hand.Count)));
             for(var i = 0; i < linesCoinsPlayerHand.Count; i++)
             {
-                var spaces = new string(' ', spaceBaseValue - 13 - player.Hand.GetAllCards().Count * 2);
+                var spaces = new string(' ', spaceBaseValue - 11 - player.Hand.GetAllCards().Count * 2);
                 linesCoinsPlayerHand[i] = $"{coins[i]}{new string(' ', spaceBaseValue / 2)}{playerLines[i]}{spaces}{hand[i]}{spaces}";
             }
 

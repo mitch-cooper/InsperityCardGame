@@ -48,7 +48,7 @@ namespace GameState
 
     public enum Rarity
     {
-        Common = ConsoleColor.DarkGray,
+        Common = ConsoleColor.Gray,
         Rare = ConsoleColor.Blue,
         Epic = ConsoleColor.Magenta,
         Legendary = ConsoleColor.Yellow

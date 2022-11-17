@@ -77,16 +77,12 @@ namespace GameState
             var cardCountDisplay = ColorConsole.FormatEmbeddedColorPadLeft(CurrentCards.Count.ToString(), cardCountDisplayColor, 2, ' ');
             var maxAdditionalCardsToShowInDeck = 3;
             var deckVisualDisplayTop = new string('_', Math.Min(maxAdditionalCardsToShowInDeck, Math.Max(CurrentCards.Count - 1, 0))).PadLeft(maxAdditionalCardsToShowInDeck, ' ');
-            if (CurrentCards.Count <= 1)
-            {
-                // TODO: fix last character of top of deck
-                //deckVisualDisplayTop.Remove()
-            }
+            deckVisualDisplayTop += CurrentCards.Count <= 1 ? " " : "_";
             var deckVisualDisplay = new string('|', Math.Min(maxAdditionalCardsToShowInDeck, Math.Max(CurrentCards.Count - 1, 0))).PadLeft(maxAdditionalCardsToShowInDeck, ' ');
             var lines = new List<string>()
             {
                 $"Deck:{cardCountDisplay}",
-                $"{deckVisualDisplayTop}______",
+                $"{deckVisualDisplayTop}_____",
                 $"{deckVisualDisplay}|     |",
                 $"{deckVisualDisplay}|     |",
                 $"{deckVisualDisplay}|     |",

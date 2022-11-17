@@ -101,8 +101,8 @@ namespace GameState
             for (int i = 0; i < Constants.MaxMinions; i++)
             {
                 var canAttack = isMyTurn && i < Minions.Count && Minions[i].CanAttack();
-                lines[^2] += ColorConsole.FormatEmbeddedColor("\\_______/ ", canAttack ? ConsoleColor.Green : ConsoleColor.White);
-                lines[^1] += ColorConsole.FormatEmbeddedColor($"   {minionKeys[i].ToString().PadRight(7, ' ')}", canAttack ? ConsoleColor.Green : ConsoleColor.White);
+                lines[^2] += ColorConsole.FormatEmbeddedColor("\\_______/ ", canAttack ? Constants.ActionColor : ConsoleColor.White);
+                lines[^1] += ColorConsole.FormatEmbeddedColor($"   {minionKeys[i].ToString().PadRight(7, ' ')}", canAttack ? Constants.ActionColor : ConsoleColor.White);
             }
 
             return lines;

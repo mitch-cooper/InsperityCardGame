@@ -8,6 +8,7 @@ namespace GameState
     public static class Prompts
     {
         public static readonly string InputErrorMessage = "Unrecognized input. Try again.";
+        public static readonly string PressAnyKeyMessage = "Press any key to return:";
         public static bool WantToPlayAgain()
         {
             ColorConsole.WriteLine($"Want to play again? ({Constants.YesKey}/{Constants.NoKey})");
@@ -26,10 +27,10 @@ namespace GameState
 
         public static PlayerInput TurnActions(Dictionary<PlayerInput, (string Label, Guid CallbackParam, Action<Guid> Callback)> actions)
         {
-            ColorConsole.WriteLine("Turn Actions: ");
+            ColorConsole.WriteLine("Cards in hand/turn actions: ");
             foreach (var prompt in actions)
             {
-                ColorConsole.WriteEmbeddedColorLine($"\t{prompt.Key} - {prompt.Value.Label}");
+                ColorConsole.WriteEmbeddedColorLine($"\t{prompt.Key.ToStringFormattedColor()} - {prompt.Value.Label}");
             }
             var input = new PlayerInput(Console.ReadKey().Key);
             if (!actions.ContainsKey(input))
@@ -100,6 +101,20 @@ namespace GameState
                 return SelectTarget(currentPlayerId, targetCategory, filterPredicate);
             }
             return targetDictionary[input];
+        }
+
+        public static void HistoryView(Guid irrelevant)
+        {
+            Console.Clear();
+            GameController.HistoryLog.PrintNthEvents(40);
+            ColorConsole.WriteLine($"\n{PressAnyKeyMessage}");
+            Console.ReadKey();
+        }
+
+        public static void CardIsUnplayable(Guid irrelevant)
+        {
+            ColorConsole.WriteLine($"\nYou cannot play that card. {PressAnyKeyMessage}");
+            Console.ReadKey();
         }
     }
 }

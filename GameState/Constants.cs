@@ -19,6 +19,11 @@ namespace GameState
         public static readonly int MaxMinions = 6;
         public static readonly int BasePlayerHealth = 25;
 
+
+        public static readonly ConsoleColor ActionColor = ConsoleColor.Green;
+        public static readonly ConsoleColor InActionColor = ConsoleColor.DarkGray;
+        public static readonly ConsoleColor SecondaryActionColor = ConsoleColor.White;
+
         #region Keys
         public static readonly PlayerInput EndTurnKey = new PlayerInput(ConsoleKey.E);
         public static readonly PlayerInput YesKey = new PlayerInput(ConsoleKey.Y);
@@ -56,7 +61,7 @@ namespace GameState
             new PlayerInput(ConsoleKey.F8),
             new PlayerInput(ConsoleKey.F9),
             new PlayerInput(ConsoleKey.F10),
-            new PlayerInput(ConsoleKey.OemPlus, "+"),
+            new PlayerInput(ConsoleKey.OemPlus, " +"),
             new PlayerInput(ConsoleKey.F12)
         });
 

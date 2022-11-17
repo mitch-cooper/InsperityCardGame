@@ -10,7 +10,7 @@ namespace GameState
     {
         public List<Card> GetAllCards();
         public List<Card> GetPlayableCards();
-        public bool IsCardInHandAndPlayable(Card card);
+        public bool IsCardPlayable(Card card);
         public void DrawCard(Card card);
         public void AddCard(Card card);
         public void RemoveCard(Guid cardId);
@@ -39,10 +39,10 @@ namespace GameState
 
         public List<Card> GetPlayableCards()
         {
-            return Cards.Where(IsCardInHandAndPlayable).ToList();
+            return Cards.Where(IsCardPlayable).ToList();
         }
 
-        public bool IsCardInHandAndPlayable(Card card)
+        public bool IsCardPlayable(Card card)
         {
             var player = GameController.GetPlayer(OwnerId);
             return Cards.Exists(x => x.CardId == card.CardId)
@@ -144,15 +144,19 @@ namespace GameState
                 "   in  ",
                 "  hand ",
                 "       ",
+                "       ",
+                "       ",
             };
             var owner = GameController.GetPlayer(OwnerId);
             foreach (var (card, i) in Cards.WithIndex())
             {
                 var borderColor = !owner.IsMyTurn ? ConsoleColor.White
                     : (ConsoleColor) card.Rarity;
-                var cardIndexColor = owner.IsMyTurn && IsCardInHandAndPlayable(card)
-                    ? ConsoleColor.Green
-                    : ConsoleColor.White;
+                var cardIndexColor = !owner.IsMyTurn ? ConsoleColor.White
+                    : IsCardPlayable(card)
+                        ? Constants.ActionColor
+                        : Constants.InActionColor;
+
                 for (int j = 0; j < lines.Count; j++)
                 {
                     if (i == 0)
@@ -177,11 +181,11 @@ namespace GameState
                             : ColorConsole.FormatEmbeddedColorPadRight((i + 1).ToString(), cardIndexColor, 2, ' ');
                         lines[j] += $"{ColorConsole.FormatEmbeddedColor("|", borderColor)}{handIndexString}";
                     }
-                    else if (j < lines.Count - 1)
+                    else if (j == 2 || (j > 3 && j < 5))
                     {
                         lines[j] += ColorConsole.FormatEmbeddedColor("|  ", borderColor);
                     }
-                    else
+                    else if (j == 5)
                     {
                         lines[j] += ColorConsole.FormatEmbeddedColor("|__", borderColor);
                     }
@@ -195,7 +199,7 @@ namespace GameState
                         {
                             lines[j] += ColorConsole.FormatEmbeddedColor("___ ", borderColor);
                         }
-                        else if (j == 1)
+                        else if (j == 1 || j == 2 || j == 4)
                         {
                             lines[j] += $"{ColorConsole.FormatEmbeddedColor("   |", borderColor)}";
                         }
@@ -203,11 +207,7 @@ namespace GameState
                         {
                             lines[j] += $"{ColorConsole.FormatEmbeddedColorPadRight((i + 1).ToString(), cardIndexColor, 3, ' ')}{ColorConsole.FormatEmbeddedColor("|", borderColor)}";
                         }
-                        else if (j < lines.Count - 1)
-                        {
-                            lines[j] += ColorConsole.FormatEmbeddedColor("   |", borderColor);
-                        }
-                        else
+                        else if (j == 5)
                         {
                             lines[j] += ColorConsole.FormatEmbeddedColor("___|", borderColor);
                         }

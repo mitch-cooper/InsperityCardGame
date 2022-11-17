@@ -11,6 +11,7 @@ namespace GameState
         {
             return Enumerable.Repeat(value, rows).ToList();
         }
+
         public static List<string> FormatCoinsDrawToConsoleLines(int availableCoins, int spentCoins)
         {
             var lines = new List<string>()
@@ -20,40 +21,52 @@ namespace GameState
                 "| {0}  {1} |",
                 "| {0}  {1} |",
                 "| {0}  {1} |",
-                "|_{0}__{1}_|",
+                "| {0}  {1} |",
+                "\\______/",
+                new string(' ', 8),
             };
-            for (int i = 1; i < lines.Count; i++)
+
+            for (int i = 1; i < 6; i++)
             {
+                var availableCoinDisplay = "$";
+                var availableCoinColor = ConsoleColor.Yellow;
+
+                var spentCoinDisplay = "0";
+                var spentCoinColor = ConsoleColor.DarkRed;
+
+                var noCoinDisplay = " ";
+                var noCoinColor = ConsoleColor.White;
+
                 var firstReplace = string.Empty;
                 if (availableCoins > 0)
                 {
-                    firstReplace = ColorConsole.FormatEmbeddedColor("$", ConsoleColor.Yellow);
+                    firstReplace = ColorConsole.FormatEmbeddedColor(availableCoinDisplay, availableCoinColor);
                     availableCoins--;
                 }
                 else if (spentCoins > 0)
                 {
-                    firstReplace = ColorConsole.FormatEmbeddedColor("O", ConsoleColor.DarkRed);
+                    firstReplace = ColorConsole.FormatEmbeddedColor(spentCoinDisplay, spentCoinColor);
                     spentCoins--;
                 }
                 else
                 {
-                    firstReplace = ColorConsole.FormatEmbeddedColor("_", ConsoleColor.White);
+                    firstReplace = ColorConsole.FormatEmbeddedColor(noCoinDisplay, noCoinColor);
                 }
 
                 var secondReplace = string.Empty;
                 if (availableCoins > 0)
                 {
-                    secondReplace = ColorConsole.FormatEmbeddedColor("$", ConsoleColor.Yellow);
+                    secondReplace = ColorConsole.FormatEmbeddedColor(availableCoinDisplay, availableCoinColor);
                     availableCoins--;
                 }
                 else if (spentCoins > 0)
                 {
-                    secondReplace = ColorConsole.FormatEmbeddedColor("O", ConsoleColor.DarkRed);
+                    secondReplace = ColorConsole.FormatEmbeddedColor(spentCoinDisplay, spentCoinColor);
                     spentCoins--;
                 }
                 else
                 {
-                    secondReplace = ColorConsole.FormatEmbeddedColor("_", ConsoleColor.White);
+                    secondReplace = ColorConsole.FormatEmbeddedColor(noCoinDisplay, noCoinColor);
                 }
 
                 lines[i] = string.Format(lines[i], firstReplace, secondReplace);

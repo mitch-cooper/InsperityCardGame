@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using GameState;
 using GameState.GameRules;
@@ -48,40 +49,48 @@ namespace GameState
         public void PromptTurnActions()
         {
             PlayerInput actionSelected = new PlayerInput(ConsoleKey.Spacebar);
+            var endTurnKey = Constants.EndTurnKey;
             do
             {
                 GameController.PrintGame();
-                Hand.PrintHand();
+                //Hand.PrintHand();
                 var actions = new Dictionary<PlayerInput, (string Label, Guid CallbackParam, Action<Guid> Callback)>();
+
+                //var allCardsInHand = Hand.GetAllCards();
+                //foreach (var playableCard in Hand.GetPlayableCards())
+                //{
+                //    actions[Constants.HandCardKeys[allCardsInHand.FindIndex(x => x.CardId == playableCard.CardId)]] =
+                //        ($"Play {playableCard.GameToString()}", playableCard.CardId, Hand.PlayCard);
+                //}
                 
-                var allCardsInHand = Hand.GetAllCards();
-                foreach (var playableCard in Hand.GetPlayableCards())
+                foreach (var (cardInHand, index) in Hand.GetAllCards().WithIndex())
                 {
-                    actions[Constants.HandCardKeys[allCardsInHand.FindIndex(x => x.CardId == playableCard.CardId)]] =
-                        ($"Play {playableCard.GameToString()}", playableCard.CardId, Hand.PlayCard);
+                    var isPlayable = Hand.IsCardPlayable(cardInHand);
+                    var methodCallback = isPlayable
+                        ? (Action<Guid>)Hand.PlayCard
+                        : Prompts.CardIsUnplayable;
+                    var promptKey = Constants.HandCardKeys[index];
+                    promptKey.Color = isPlayable ? Constants.ActionColor : Constants.InActionColor;
+                    actions[promptKey] = (cardInHand.GameToString(), cardInHand.CardId, methodCallback);
                 }
 
                 foreach (var attackableMinion in Board.GetMinionsThatCanAttack())
                 {
-                    actions[attackableMinion.Key] =
+                    var attackableMinionKey = attackableMinion.Key;
+                    attackableMinionKey.Color = Constants.ActionColor;
+                    actions[attackableMinionKey] =
                         ($"Attack with {attackableMinion.Value.GameToString()}", OwnerId,
                             attackableMinion.Value.PromptAttackAndAttack);
                 }
                 
-                actions.Add(Constants.EventHistoryKey, ("View history", Guid.NewGuid(), (x) =>
-                {
-                    Console.Clear();
-                    GameController.HistoryLog.PrintNthEvents(40);
-                    ColorConsole.WriteLine($"\nPress any key to return:");
-                    Console.ReadKey();
-                }
-                ));
+                actions.Add(Constants.EventHistoryKey, ("View history", Guid.NewGuid(), Prompts.HistoryView));
 
-                actions.Add(Constants.EndTurnKey, ("End turn", Guid.NewGuid(), (x) => { }));
+                endTurnKey.Color = actions.Keys.All(x => x.Color != Constants.ActionColor) ? Constants.ActionColor : Constants.SecondaryActionColor;
+                actions.Add(endTurnKey, ("End turn", Guid.NewGuid(), (x) => { }));
 
                 actionSelected = Prompts.TurnActions(actions);
                 actions[actionSelected].Callback(actions[actionSelected].CallbackParam);
-            } while (!Equals(actionSelected, Constants.EndTurnKey));
+            } while (!Equals(actionSelected, endTurnKey));
         }
         
         public void Draw()
@@ -101,15 +110,21 @@ namespace GameState
             var health = Health.GameToStringValues();
             var attack = Attack.GameToStringValues();
             var attackText = attack.Value == "0" ? ColorConsole.FormatEmbeddedColor("__", Color) : ColorConsole.FormatEmbeddedColorPadRight(attack.Value, attack.Color, 2, '_', Color);
-            var healthText = ColorConsole.FormatEmbeddedColorPadLeft(health.Value, health.Color, 2, '_', Color);
+            var healthText = ColorConsole.FormatEmbeddedColorPadLeft(health.Value, health.Color, 3, '_', Color);
+
+            var canAttackColor = IsMyTurn && CanAttack() ? Constants.ActionColor : ConsoleColor.White;
+            var inputPrompt = IsMyTurn ? Constants.CurrentPlayerKey : Constants.OpponentPlayerKey;
+
             var lines = new List<string>()
             {
-                ColorConsole.FormatEmbeddedColor($"  ___  ", Color),
-                ColorConsole.FormatEmbeddedColor($" /   \\ ", Color),
-                ColorConsole.FormatEmbeddedColor($"|     |", Color),
-                ColorConsole.FormatEmbeddedColor($"| P {_displayNumber} |", Color),
-                ColorConsole.FormatEmbeddedColor($"|     |", Color),
-                $"{ColorConsole.FormatEmbeddedColor("|", Color)}{attackText}{ColorConsole.FormatEmbeddedColor("_", Color)}{healthText}{ColorConsole.FormatEmbeddedColor("|", Color)}",
+                ColorConsole.FormatEmbeddedColor($"   ___   ", Color),
+                ColorConsole.FormatEmbeddedColor($"  /   \\  ", Color),
+                ColorConsole.FormatEmbeddedColor($" |     | ", Color),
+                ColorConsole.FormatEmbeddedColor($" | P {_displayNumber} | ", Color),
+                ColorConsole.FormatEmbeddedColor($" |     | ", Color),
+                $" {ColorConsole.FormatEmbeddedColor("|", Color)}{attackText}{healthText}{ColorConsole.FormatEmbeddedColor("|", Color)} ",
+                ColorConsole.FormatEmbeddedColor("\\_______/", canAttackColor),
+                ColorConsole.FormatEmbeddedColor($"    {inputPrompt.ToString().PadRight(5, ' ')}", canAttackColor)
             };
             return lines;
         }
