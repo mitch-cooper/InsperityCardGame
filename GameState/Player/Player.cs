@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GameState;
+using GameState.Cards;
 using GameState.GameRules;
 
 namespace GameState
@@ -109,20 +110,22 @@ namespace GameState
         {
             var health = Health.GameToStringValues();
             var attack = Attack.GameToStringValues();
-            var attackText = attack.Value == "0" ? ColorConsole.FormatEmbeddedColor("__", Color) : ColorConsole.FormatEmbeddedColorPadRight(attack.Value, attack.Color, 2, '_', Color);
-            var healthText = ColorConsole.FormatEmbeddedColorPadLeft(health.Value, health.Color, 3, '_', Color);
+            var borderColor = HasAttribute(BoardCharacterAttribute.Frozen) ? Constants.FrozenColor : Color;
+
+            var attackText = attack.Value == "0" ? ColorConsole.FormatEmbeddedColor("__", borderColor) : ColorConsole.FormatEmbeddedColorPadRight(attack.Value, attack.Color, 2, '_', borderColor);
+            var healthText = ColorConsole.FormatEmbeddedColorPadLeft(health.Value, health.Color, 3, '_', borderColor);
 
             var canAttackColor = IsMyTurn && CanAttack() ? Constants.ActionColor : ConsoleColor.White;
             var inputPrompt = IsMyTurn ? Constants.CurrentPlayerKey : Constants.OpponentPlayerKey;
 
             var lines = new List<string>()
             {
-                ColorConsole.FormatEmbeddedColor($"   ___   ", Color),
-                ColorConsole.FormatEmbeddedColor($"  /   \\  ", Color),
-                ColorConsole.FormatEmbeddedColor($" |     | ", Color),
-                ColorConsole.FormatEmbeddedColor($" | P {_displayNumber} | ", Color),
-                ColorConsole.FormatEmbeddedColor($" |     | ", Color),
-                $" {ColorConsole.FormatEmbeddedColor("|", Color)}{attackText}{healthText}{ColorConsole.FormatEmbeddedColor("|", Color)} ",
+                ColorConsole.FormatEmbeddedColor($"   ___   ", borderColor),
+                ColorConsole.FormatEmbeddedColor($"  /   \\  ", borderColor),
+                ColorConsole.FormatEmbeddedColor($" |     | ", borderColor),
+                ColorConsole.FormatEmbeddedColor($" | P {_displayNumber} | ", borderColor),
+                ColorConsole.FormatEmbeddedColor($" |     | ", borderColor),
+                $" {ColorConsole.FormatEmbeddedColor("|", borderColor)}{attackText}{healthText}{ColorConsole.FormatEmbeddedColor("|", borderColor)} ",
                 ColorConsole.FormatEmbeddedColor("\\_______/", canAttackColor),
                 ColorConsole.FormatEmbeddedColor($"    {inputPrompt.ToString().PadRight(5, ' ')}", canAttackColor)
             };

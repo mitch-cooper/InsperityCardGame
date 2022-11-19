@@ -28,5 +28,10 @@ namespace GameState.Cards.Collection
                     player.Coins.AddToCurrentValue(1);
                 });
         }
+
+        public static MinionBuilder Token(string name, int cost, int attack, int health)
+        {
+            return new MinionBuilder(name, cost, attack, health, "", Rarity.Common);
+        }
     }
 }

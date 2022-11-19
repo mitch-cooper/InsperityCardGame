@@ -6,6 +6,6 @@ namespace GameState.GameRules
 {
     public interface IGameEventEmitter
     {
-        delegate void GameEventHandler(GameEvent gameEvent);
+        delegate void GameEventHandler(GameEvent e);
     }
 }

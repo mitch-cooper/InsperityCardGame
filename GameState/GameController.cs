@@ -38,18 +38,20 @@ namespace GameState
 
             Player1.DeathTriggered += PlayerDied;
             Player2.DeathTriggered += PlayerDied;
-
-            TurnSystem.ResetTurns(Player1, Player2);
-
+            
             HistoryLog.ResetHistory();
             SubscribeToAllEvents(HistoryLog.AddEvent);
+
+            TurnSystem.ResetTurns(Player1, Player2);
 
             try
             {
                 while (true)
                 {
                     TurnSystem.StartTurn(TurnSystem.GoesFirst);
+                    TurnSystem.EndTurn(TurnSystem.GoesFirst);
                     TurnSystem.StartTurn(TurnSystem.GoesSecond);
+                    TurnSystem.EndTurn(TurnSystem.GoesSecond);
                 }
             }
             catch (Exception ex)
@@ -78,11 +80,11 @@ namespace GameState
         private static void SubscribeToAllEvents(IGameEventEmitter.GameEventHandler action)
         {
             TurnSystem.TurnStartTriggered += action;
-            SubscribePlayerHistoryEvents(Player1, action);
-            SubscribePlayerHistoryEvents(Player2, action);
+            SubscribeToPlayerEvents(Player1, action);
+            SubscribeToPlayerEvents(Player2, action);
         }
 
-        private static void SubscribePlayerHistoryEvents(Player player, IGameEventEmitter.GameEventHandler action)
+        private static void SubscribeToPlayerEvents(Player player, IGameEventEmitter.GameEventHandler action)
         {
             player.AttackTriggered += action;
             player.DeathTriggered += action;

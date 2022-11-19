@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using GameState.Cards;
 
 namespace GameState.GameRules
 {
@@ -12,5 +13,7 @@ namespace GameState.GameRules
         void RestoreHealth(int value);
         void PromptAttackAndAttack(Guid playerId);
         void AttackBoardItem(BoardCharacter unit);
+        void Freeze();
+        bool HasAttribute(BoardCharacterAttribute attribute);
     }
 }

@@ -5,20 +5,6 @@ using GameState.GameRules;
 
 namespace GameState.Cards
 {
-    public interface ISpell// : ICard
-    {
-        Guid CardId { get; }
-        Guid OwnerId { get; }
-        string Name { get; }
-        CostValueState Cost { get; }
-        string Text { get; }
-        Rarity Rarity { get; }
-        List<int> SpellValues { get; }
-        SpellType Type { get; }
-        (TargetCategory Category, Predicate<BoardCharacter> Filter) TargetingParams { get; }
-        BoardCharacter SelectedTarget { get; }
-    }
-
     public class SpellBuilder : ISpell
     {
         public Guid CardId { get; }
@@ -33,8 +19,8 @@ namespace GameState.Cards
 
         public (TargetCategory Category, Predicate<BoardCharacter> Filter) TargetingParams { get; protected set; }
         public BoardCharacter SelectedTarget { get; }
-        public Action<ISpell, Guid> OnPlay = Constants.DoNothingSpell;
-        public Action<ISpell, Guid> OnDraw = Constants.DoNothingSpell;
+        public Action<ISpell, Guid> OnPlay { get; protected set; } = Constants.DoNothingSpell;
+        public Action<ISpell, Guid> OnDraw { get; protected set; } = Constants.DoNothingSpell;
 
         public SpellBuilder(string name, int cost, string text, Rarity rarity)
         {

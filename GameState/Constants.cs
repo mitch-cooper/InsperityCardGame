@@ -10,7 +10,7 @@ namespace GameState
     public static class Constants
     {
         public static Action<Guid> DoNothing => (playerId) => { };
-        public static Action<IBoardItemCard, Guid> DoNothingBoardItemCard => (builder, playerId) => { };
+        public static Action<Minion, Guid> DoNothingMinion => (builder, playerId) => { };
         public static Action<ISpell, Guid> DoNothingSpell => (builder, playerId) => { };
 
         public static readonly int BaseDeckSize = 20;
@@ -19,10 +19,11 @@ namespace GameState
         public static readonly int MaxMinions = 6;
         public static readonly int BasePlayerHealth = 25;
 
-
         public static readonly ConsoleColor ActionColor = ConsoleColor.Green;
         public static readonly ConsoleColor InActionColor = ConsoleColor.DarkGray;
         public static readonly ConsoleColor SecondaryActionColor = ConsoleColor.White;
+
+        public static readonly ConsoleColor FrozenColor = ConsoleColor.Cyan;
 
         #region Keys
         public static readonly PlayerInput EndTurnKey = new PlayerInput(ConsoleKey.E);

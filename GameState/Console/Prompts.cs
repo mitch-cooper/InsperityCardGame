@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using GameState.GameRules;
 
@@ -41,12 +42,13 @@ namespace GameState
             return input;
         }
 
-        public static BoardCharacter SelectAttackTarget(Guid playerId)
+        public static BoardCharacter SelectAttackTarget(Guid playerId, Predicate<BoardCharacter> filterPredicate = null)
         {
+            filterPredicate ??= (x) => true;
             var targets = GameController.GetOpponent(playerId).Board.GetAttackableTargets();
             targets.Add(Constants.CancelKey, null);
             ColorConsole.WriteLine($"Choose a target to attack: ");
-            foreach (var target in targets)
+            foreach (var target in targets.Where(x => filterPredicate(x.Value)))
             {
                 var targetDisplay = string.Empty;
                 switch (target.Value)
@@ -84,7 +86,7 @@ namespace GameState
                 switch (prompt.Value)
                 {
                     case Minion m:
-                        ColorConsole.WriteEmbeddedColorLine($"\t{prompt.Key} - {m.GameToString(currentPlayerId)}");
+                        ColorConsole.WriteEmbeddedColorLine($"\t{prompt.Key.ToString().Trim()} - {m.GameToString(currentPlayerId)}");
                         break;
                     case Player p:
                         ColorConsole.WriteEmbeddedColorLine($"\t{prompt.Key} - {p.GameToString(currentPlayerId)}");

@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using GameState.Cards;
 
 namespace GameState.GameRules
 {
     public abstract class BoardCharacter : Card, IBoardItem, IGameEventEmitter
     {
-        //public new Action</*IBoardItem, */Guid> OnPlay { get; protected set; }
         public AttackValueState Attack { get; protected set; }
         public HealthValueState Health { get; protected set; }
+        public HashSet<BoardCharacterAttribute> Attributes { get; set; }
         public int AttacksThisTurn { get; set; }
+        public int MaxAttacksThisTurn => Attributes.Contains(BoardCharacterAttribute.Windfury) ? 2 : 1;
         public int SleepTurnTimer { get; set; }
         public event IGameEventEmitter.GameEventHandler DeathTriggered;
         public event IGameEventEmitter.GameEventHandler AttackTriggered;
@@ -21,12 +24,16 @@ namespace GameState.GameRules
             Health = health;
             AttacksThisTurn = 0;
             SleepTurnTimer = 1;
+            Attributes = new HashSet<BoardCharacterAttribute>();
         }
 
         protected void ResetCharacter()
         {
             DeathTriggered = null;
             AttackTriggered = null;
+            Cost = new CostValueState(Cost.OriginalBaseValue);
+            Attack = new AttackValueState(Attack.OriginalBaseValue);
+            Health = new HealthValueState(Health.OriginalBaseValue);
             AttacksThisTurn = 0;
             SleepTurnTimer = 1;
         }
@@ -43,6 +50,7 @@ namespace GameState.GameRules
             var newHealth = Health.AddToCurrentValue((int)(value * -1));
             if (newHealth <= 0)
             {
+                // TODO: wait to resolve the death effect
                 OnDeathEvent();
             }
         }
@@ -54,10 +62,10 @@ namespace GameState.GameRules
 
         public bool CanAttack()
         {
-            return SleepTurnTimer == 0 && AttacksThisTurn == 0 && Attack.CurrentValue > 0;
+            return SleepTurnTimer == 0 && AttacksThisTurn < MaxAttacksThisTurn && Attack.CurrentValue > 0;
         }
 
-        public void PromptAttackAndAttack(Guid playerId)
+        public virtual void PromptAttackAndAttack(Guid playerId)
         {
             AttackBoardItem(Prompts.SelectAttackTarget(playerId));
         }
@@ -72,6 +80,26 @@ namespace GameState.GameRules
             AttackTriggered?.Invoke(new GameEvent(this, GameEventType.Attack, $"{Name} attacked {unit.Name}."));
             unit.TakeDamage(Attack.CurrentValue);
             TakeDamage(unit.Attack.CurrentValue);
+        }
+
+        public bool HasAttribute(BoardCharacterAttribute attribute)
+        {
+            return Attributes.Contains(attribute);
+        }
+
+        public void Freeze()
+        {
+            SleepTurnTimer++;
+            Attributes.Add(BoardCharacterAttribute.Frozen);
+            GameController.TurnSystem.TurnEndTriggered += (e) =>
+            {
+                if (e.Entity.OwnerId == OwnerId && HasAttribute(BoardCharacterAttribute.Frozen)
+                    && ((SleepTurnTimer == 1 && AttacksThisTurn == 0)
+                        || SleepTurnTimer == 0))
+                {
+                    Attributes.Remove(BoardCharacterAttribute.Frozen);
+                }
+            };
         }
     }
 }

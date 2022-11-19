@@ -39,6 +39,9 @@ namespace GameState.GameRules
             GoesSecond.AddCardFromDeckToHand();
             GoesSecond.AddCardFromDeckToHand();
             GoesSecond.AddCardFromDeckToHand();
+
+            // TODO: implement mulligan?
+
             GoesSecond.Hand.AddCard(NonCollectibleCards.Money().Build(GoesSecond.OwnerId));
         }
 
@@ -50,21 +53,23 @@ namespace GameState.GameRules
             player.Draw();
             player.Coins.AddToBaseValue(1);
             player.Coins.AddToCurrentValue(player.Coins.BaseValue - player.Coins.CurrentValue);
-            var minions = player.Board.GetAllMinions().ToList();
-            minions.ForEach(x => x.AttacksThisTurn = 0);
+            
+            // TODO: Can remove later, handled by minion event subscription
+            //var minions = player.Board.GetAllMinions().ToList();
+            //minions.ForEach(x => x.AttacksThisTurn = 0);
 
             TurnStartTriggered?.Invoke(new GameEvent(player, GameEventType.TurnStart, $"{TurnCount.GetOrdinalSuffix()} turn has started."));
 
             player.PromptTurnActions();
-
-            EndTurn(player);
         }
 
         public void EndTurn(Player player)
         {
             player.IsMyTurn = false;
-            var minions = player.Board.GetAllMinions().Where(x => x.SleepTurnTimer > 0).ToList();
-            minions.ForEach(x => x.SleepTurnTimer--);
+
+            // TODO: Can remove later, handled by minion event subscription
+            //var minions = player.Board.GetAllMinions().Where(x => x.SleepTurnTimer > 0).ToList();
+            //minions.ForEach(x => x.SleepTurnTimer--);
 
             TurnEndTriggered?.Invoke(new GameEvent(player, GameEventType.TurnEnd, $"{TurnCount.GetOrdinalSuffix()} turn has ended."));
         }

@@ -9,10 +9,8 @@ namespace GameState
 {
     public class Spell : Card, ISpell
     {
-        public new Action<ISpell, Guid> OnDraw { get; protected set; }
-        public new Action<ISpell, Guid> OnPlay { get; protected set; }
-        public (TargetCategory Category, Predicate<BoardCharacter> Filter) TargetingParams { get; protected set; }
-        public BoardCharacter SelectedTarget { get; protected set; }
+        public Action<ISpell, Guid> OnDraw { get; protected set; }
+        public Action<ISpell, Guid> OnPlay { get; protected set; }
         public List<int> SpellValues { get; protected set; }
         public SpellType Type { get; protected set; }
 
@@ -23,6 +21,7 @@ namespace GameState
             OnPlay = builder.OnPlay;
             OnDraw = builder.OnDraw;
             TargetingParams = builder.TargetingParams;
+            TargetRequiredToPlay = true;
         }
 
         public string DisplayText => string.Format(Text, SpellValues.Select(x => x.ToString()).ToArray());
@@ -30,28 +29,8 @@ namespace GameState
         public override string GameToString()
         {
             var cost = Cost.GameToStringValues();
-            return $"[({ColorConsole.FormatEmbeddedColor(cost.Value, cost.Color)}) {ColorConsole.FormatEmbeddedColor(Name, (ConsoleColor) Rarity)} {DisplayText}]";
-        }
-
-        public bool HasAvailableTargets()
-        {
-            return TargetingParams.Category == TargetCategory.None
-                   || TargetMatcher.GetTargets(OwnerId, TargetingParams.Category, TargetingParams.Filter).Count != 0;
-        }
-
-        public bool CanProceedWithOnPlay()
-        {
-            if (TargetingParams.Category == TargetCategory.None)
-            {
-                return true;
-            }
-            var character = Prompts.SelectTarget(OwnerId, TargetingParams.Category, TargetingParams.Filter);
-            if (character == null)
-            {
-                return false;
-            }
-            SelectedTarget = character;
-            return true;
+            var spellTypeDisplay = Type == SpellType.None ? string.Empty : $" ({Type})";
+            return $"[({ColorConsole.FormatEmbeddedColor(cost.Value, cost.Color)}) {ColorConsole.FormatEmbeddedColor(Name, (ConsoleColor) Rarity)} - {DisplayText}{spellTypeDisplay}]";
         }
     }
 

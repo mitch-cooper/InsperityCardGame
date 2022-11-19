@@ -59,7 +59,7 @@ namespace GameState
                 switch (card)
                 {
                     case Minion m:
-                        m.OnDraw(OwnerId);
+                        m.OnDraw(m, OwnerId);
                         break;
                     case Spell s:
                         s.OnDraw(s, OwnerId);
@@ -99,22 +99,23 @@ namespace GameState
                 throw new Exception("Not enough coins");
             }
 
+            if (!cardToPlay.CanProceedWithOnPlay())
+            {
+                return;
+            }
+
             switch (cardToPlay)
             {
                 case Minion m:
-                    m.OnPlay(m.OwnerId);
+                    m.OnPlay(m, m.OwnerId);
                     RemoveCard(m.CardId);
-                    MinionPlayTriggered?.Invoke(new GameEvent(this, GameEventType.MinionPlay, $"{m.Name} was played."));
+                    MinionPlayTriggered?.Invoke(new GameEvent(m, GameEventType.MinionPlay, $"{m.Name} was played."));
                     player.Board.SummonMinion(m);
                     break;
                 case Spell s:
-                    if (!s.CanProceedWithOnPlay())
-                    {
-                        return;
-                    }
                     s.OnPlay(s, s.OwnerId);
                     RemoveCard(s.CardId);
-                    SpellPlayTriggered?.Invoke(new GameEvent(this, GameEventType.SpellPlay, $"{s.Name} was played."));
+                    SpellPlayTriggered?.Invoke(new GameEvent(s, GameEventType.SpellPlay, $"{s.Name} was played."));
                     break;
             }
             player.Coins.AddToCurrentValue(-1 * cardToPlay.Cost.CurrentValue);

@@ -5,18 +5,18 @@ using GameState.GameRules;
 
 namespace GameState
 {
-    public interface ICard/*<in T>*/ : IConsoleGameToString, IOwnable
+    public interface ICard : IConsoleGameToString, IOwnable
     {
         Guid CardId { get; }
         string Name { get; }
         string Text { get; }
         Rarity Rarity { get; }
         CostValueState Cost { get; }
-        Action</*T, */Guid> OnPlay { get; }
-        Action</*T, */Guid> OnDraw { get; }
+        (TargetCategory Category, Predicate<BoardCharacter> Filter) TargetingParams { get; }
+        BoardCharacter SelectedTarget { get; }
     }
 
-    public abstract class Card : ConsoleGameToString, ICard//<Card>
+    public abstract class Card : ConsoleGameToString, ICard
     {
         public Guid CardId { get; protected set; }
         public Guid OwnerId { get; protected set; }
@@ -24,8 +24,9 @@ namespace GameState
         public string Text { get; protected set; }
         public Rarity Rarity { get; protected set; }
         public CostValueState Cost { get; protected set; }
-        public Action</*Card, */Guid> OnPlay { get; protected set; }
-        public Action</*Card, */Guid> OnDraw { get; protected set; }
+        public (TargetCategory Category, Predicate<BoardCharacter> Filter) TargetingParams { get; protected set; }
+        public BoardCharacter SelectedTarget { get; protected set; }
+        protected bool TargetRequiredToPlay { get; set; }
 
         protected Card(Guid ownerId, string name, string text, Rarity rarity, CostValueState cost)
         {
@@ -35,6 +36,27 @@ namespace GameState
             Text = text;
             Rarity = rarity;
             Cost = cost;
+        }
+
+        public bool HasAvailableTargets()
+        {
+            return TargetingParams.Category == TargetCategory.None
+                   || TargetMatcher.GetTargets(OwnerId, TargetingParams.Category, TargetingParams.Filter).Count != 0;
+        }
+
+        public bool CanProceedWithOnPlay()
+        {
+            if (TargetingParams.Category == TargetCategory.None)
+            {
+                return true;
+            }
+            var character = Prompts.SelectTarget(OwnerId, TargetingParams.Category, TargetingParams.Filter);
+            if (character == null && TargetRequiredToPlay)
+            {
+                return false;
+            }
+            SelectedTarget = character;
+            return true;
         }
 
         public abstract override string GameToString();
