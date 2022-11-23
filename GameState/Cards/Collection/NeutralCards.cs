@@ -28,7 +28,7 @@ namespace GameState.Cards.Collection
                     {
                         if (((Minion)gameEvent.Entity).CardId != minion.CardId)
                         {
-                            var enemies = TargetMatcher.GetTargets(playerId, TargetCategory.Enemies);
+                            var enemies = TargetMatcher.GetTargets(gameEvent.Entity.OwnerId, TargetCategory.Enemies);
                             var randomEnemy = enemies.ToList()[new Random().Next(enemies.Count)].Value;
                             randomEnemy.TakeDamage(1);
                         }
@@ -36,7 +36,6 @@ namespace GameState.Cards.Collection
                     board.MinionSummonTriggered += effectFunction;
                     minion.OnDeath = (minion1, guid) =>
                     {
-                        //minion.OnDeath(minion1, guid);
                         board.MinionSummonTriggered -= effectFunction;
                     };
                 }); ;
@@ -49,11 +48,11 @@ namespace GameState.Cards.Collection
 
         public static MinionBuilder Developer()
         {
-            return new MinionBuilder("Developer", 3, 3, 2, "OnPlay: Summon a 1/2 QA.", Rarity.Rare)
+            return new MinionBuilder("Developer", 3, 3, 2, "OnPlay: Summon a 1/2 Junior Developer.", Rarity.Rare)
                 .AddOnPlay((minion, playerId) =>
                 {
                     var board = GameController.GetPlayer(playerId).Board;
-                    board.SummonMinion(NonCollectibleCards.Token("QA", 1, 1, 2).Build(playerId));
+                    board.SummonMinion(NonCollectibleCards.Token("Junior Developer", 1, 1, 2).Build(playerId));
                 });
         }
 
@@ -68,7 +67,7 @@ namespace GameState.Cards.Collection
                 .AddOnSummon((minion, playerId) =>
                 {
                     var board = GameController.GetPlayer(playerId).Board;
-                    foreach (var friendlyMinion in TargetMatcher.GetTargets(playerId, TargetCategory.FriendlyMinions).Select(x => x.Value))
+                    foreach (var friendlyMinion in board.GetAllMinions().Where(x => x.CardId != minion.CardId))
                     {
                         friendlyMinion.Attack.AddToCurrentValue(1);
                     }
@@ -80,23 +79,22 @@ namespace GameState.Cards.Collection
                             minionSummoned.Attack.AddToCurrentValue(1);
                         }
                     };
-                    board.MinionSummonTriggered += effectFunction;
+                    board.MinionAddedToBoardTriggered += effectFunction;
                     minion.OnDeath = (minion1, playerId1) =>
                     {
-                        //minion.OnDeath(minion1, playerId1);
                         var board = GameController.GetPlayer(playerId1).Board;
                         foreach (var friendlyMinion in board.GetAllMinions())
                         {
                             friendlyMinion.Attack.AddToCurrentValue(-1);
                         }
-                        board.MinionSummonTriggered -= effectFunction;
+                        board.MinionAddedToBoardTriggered -= effectFunction;
                     };
                 });
         }
 
         public static MinionBuilder CEO()
         {
-            return new MinionBuilder("CEO", 8, 3, 5, "OnPlay: Deal 10 damage randomly split amongst other minions.", Rarity.Legendary)
+            return new MinionBuilder("CEO", 8, 6, 6, "OnPlay: Deal 10 damage randomly split amongst other minions.", Rarity.Legendary)
                 .AddOnPlay((minion, playerId) =>
                 {
                     var board = TargetMatcher.GetTargets(playerId, TargetCategory.Minions);

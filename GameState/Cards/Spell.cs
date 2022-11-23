@@ -22,6 +22,7 @@ namespace GameState
             OnDraw = builder.OnDraw;
             TargetingParams = builder.TargetingParams;
             TargetRequiredToPlay = true;
+            BoardStateRequirementsToPlayMet = builder.BoardStateRequirementsToPlayMet;
         }
 
         public string DisplayText => string.Format(Text, SpellValues.Select(x => x.ToString()).ToArray());

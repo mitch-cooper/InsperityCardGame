@@ -19,6 +19,7 @@ namespace GameState.Cards
 
         public (TargetCategory Category, Predicate<BoardCharacter> Filter) TargetingParams { get; protected set; }
         public BoardCharacter SelectedTarget { get; }
+        public Func<Guid, bool> BoardStateRequirementsToPlayMet { get; protected set; } = (playerId) => true;
         public Action<ISpell, Guid> OnPlay { get; protected set; } = Constants.DoNothingSpell;
         public Action<ISpell, Guid> OnDraw { get; protected set; } = Constants.DoNothingSpell;
 
@@ -47,6 +48,12 @@ namespace GameState.Cards
         public SpellBuilder AddTargetingParams(TargetCategory category, Predicate<BoardCharacter> filter = null)
         {
             TargetingParams = (category, filter);
+            return this;
+        }
+
+        public SpellBuilder AddBoardStateRequirementsToPlay(Func<Guid, bool> function)
+        {
+            BoardStateRequirementsToPlayMet = function;
             return this;
         }
 

@@ -38,6 +38,8 @@ namespace GameState.GameRules
         Attack,
         MinionDeath,
         PlayerDeath,
-        MinionSummon
+        MinionSummon,
+        MinionAddedToBoard,
+        MinionRemovedFromBoard,
     }
 }

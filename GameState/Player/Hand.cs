@@ -47,8 +47,8 @@ namespace GameState
             var player = GameController.GetPlayer(OwnerId);
             return Cards.Exists(x => x.CardId == card.CardId)
                 && card.Cost.CurrentValue <= player.Coins.CurrentValue
-                && (!(card is Minion) || !player.Board.HasMaxMinions())
-                && (!(card is Spell) || card is Spell s && s.HasAvailableTargets());
+                && (!(card is Minion) || card is Minion m && !player.Board.HasMaxMinions() && m.IsCardPlayable())
+                && (!(card is Spell) || card is Spell s && s.IsCardPlayable());
         }
 
         public void DrawCard(Card card)

@@ -19,13 +19,14 @@ namespace GameState
     public abstract class Card : ConsoleGameToString, ICard
     {
         public Guid CardId { get; protected set; }
-        public Guid OwnerId { get; protected set; }
+        public Guid OwnerId { get; set; }
         public string Name { get; protected set; }
         public string Text { get; protected set; }
         public Rarity Rarity { get; protected set; }
         public CostValueState Cost { get; protected set; }
         public (TargetCategory Category, Predicate<BoardCharacter> Filter) TargetingParams { get; protected set; }
         public BoardCharacter SelectedTarget { get; protected set; }
+        public Func<Guid, bool> BoardStateRequirementsToPlayMet { get; protected set; }
         protected bool TargetRequiredToPlay { get; set; }
 
         protected Card(Guid ownerId, string name, string text, Rarity rarity, CostValueState cost)
@@ -38,10 +39,12 @@ namespace GameState
             Cost = cost;
         }
 
-        public bool HasAvailableTargets()
+        public bool IsCardPlayable()
         {
-            return TargetingParams.Category == TargetCategory.None
-                   || TargetMatcher.GetTargets(OwnerId, TargetingParams.Category, TargetingParams.Filter).Count != 0;
+            return (TargetingParams.Category == TargetCategory.None
+                   || !TargetRequiredToPlay
+                   || TargetMatcher.GetTargets(OwnerId, TargetingParams.Category, TargetingParams.Filter).Count != 0)
+                   && BoardStateRequirementsToPlayMet(OwnerId);
         }
 
         public bool CanProceedWithOnPlay()

@@ -19,6 +19,7 @@ namespace GameState.Cards
 
         public (TargetCategory Category, Predicate<BoardCharacter> Filter) TargetingParams { get; protected set; }
         public BoardCharacter SelectedTarget { get; }
+        public Func<Guid, bool> BoardStateRequirementsToPlayMet { get; protected set; } = (playerId) => true;
         public Action<Minion, Guid> OnPlay { get; protected set; } = Constants.DoNothingMinion;
         public Action<Minion, Guid> OnSummon { get; protected set; } = Constants.DoNothingMinion;
         public Action<Minion, Guid> OnDeath { get; protected set; } = Constants.DoNothingMinion;
@@ -39,6 +40,11 @@ namespace GameState.Cards
         public MinionBuilder AddTargetingParams(TargetCategory category, Predicate<BoardCharacter> filter = null)
         {
             TargetingParams = (category, filter);
+            return this;
+        }
+        public MinionBuilder AddBoardStateRequirementsToPlay(Func<Guid, bool> function)
+        {
+            BoardStateRequirementsToPlayMet = function;
             return this;
         }
 

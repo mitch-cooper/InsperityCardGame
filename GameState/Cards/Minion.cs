@@ -23,6 +23,7 @@ namespace GameState
             OnDraw = builder.OnDraw;
             TargetingParams = builder.TargetingParams;
             TargetRequiredToPlay = false;
+            BoardStateRequirementsToPlayMet = builder.BoardStateRequirementsToPlayMet;
             Attributes = builder.Attributes;
         }
 
@@ -49,8 +50,8 @@ namespace GameState
 
         protected override void OnDeathEvent()
         {
-            OnDeath(this, OwnerId);
             OnCharacterDeathEvent(new GameEvent(this, GameEventType.MinionDeath, $"{Name} has died."));
+            OnDeath(this, OwnerId);
         }
 
         public override void PromptAttackAndAttack(Guid playerId)

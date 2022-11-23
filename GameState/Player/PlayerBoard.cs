@@ -13,6 +13,8 @@ namespace GameState
         public event IGameEventEmitter.GameEventHandler MinionSummonTriggered;
         public event IGameEventEmitter.GameEventHandler MinionAttackTriggered;
         public event IGameEventEmitter.GameEventHandler MinionDeathTriggered;
+        public event IGameEventEmitter.GameEventHandler MinionRemovedFromBoardTriggered;
+        public event IGameEventEmitter.GameEventHandler MinionAddedToBoardTriggered;
 
         public PlayerBoard(Guid playerId)
         {
@@ -57,22 +59,41 @@ namespace GameState
         {
             if (!HasMaxMinions())
             {
-                Minions.Add(minion);
+                AddMinionToBoard(minion);
                 minion.Summon();
                 MinionSummonTriggered?.Invoke(new GameEvent(minion, GameEventType.MinionSummon, $"{minion.Name} was summoned."));
+            }
+        }
+
+        private void MinionDiedOnBoard(GameEvent gameEvent)
+        {
+            var minion = (Minion)gameEvent.Entity;
+            RemoveMinionFromBoard(minion);
+            MinionDeathTriggered?.Invoke(gameEvent);
+        }
+
+        public void AddMinionToBoard(Minion minion)
+        {
+            if (!HasMaxMinions())
+            {
+                minion.OwnerId = OwnerId;
+                Minions.Add(minion);
+                MinionAddedToBoardTriggered?.Invoke(new GameEvent(minion, GameEventType.MinionAddedToBoard,
+                    $"{minion.Name} was added to player board."));
+
                 minion.AttackTriggered += (gameEvent) =>
                 {
                     MinionAttackTriggered?.Invoke(gameEvent);
                 };
-                minion.DeathTriggered += RemoveMinionFromBoard;
+                minion.DeathTriggered += MinionDiedOnBoard;
             }
         }
 
-        private void RemoveMinionFromBoard(GameEvent gameEvent)
+        public void RemoveMinionFromBoard(Minion minion)
         {
-            var minion = (Minion) gameEvent.Entity;
             Minions.Remove(minion);
-            MinionDeathTriggered?.Invoke(gameEvent);
+            MinionRemovedFromBoardTriggered?.Invoke(new GameEvent(minion, GameEventType.MinionRemovedFromBoard, 
+                $"{minion.Name} was removed from player board."));
         }
 
         public List<string> GetDrawToConsoleLines()

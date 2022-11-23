@@ -13,11 +13,11 @@ namespace GameState
         public static Action<Minion, Guid> DoNothingMinion => (builder, playerId) => { };
         public static Action<ISpell, Guid> DoNothingSpell => (builder, playerId) => { };
 
-        public static readonly int BaseDeckSize = 20;
+        public static readonly int BaseDeckSize = 30;
         public static readonly int MaxHandSize = 8;
         public static readonly int MaxCoins = 10;
         public static readonly int MaxMinions = 6;
-        public static readonly int BasePlayerHealth = 25;
+        public static readonly int BasePlayerHealth = 30;
 
         public static readonly ConsoleColor ActionColor = ConsoleColor.Green;
         public static readonly ConsoleColor InActionColor = ConsoleColor.DarkGray;
