@@ -44,7 +44,7 @@ namespace GameState
         }
         protected override void OnDeathEvent()
         {
-            OnCharacterDeathEvent(new GameEvent(this, GameEventType.PlayerDeath, $"{Name} has died."));
+            OnCharacterDeathEvent(new GameEvent(this, GameEventType.PlayerDeath, $"{GameToString()} has died."));
         }
 
         public void PromptTurnActions()

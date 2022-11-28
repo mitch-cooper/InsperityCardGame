@@ -61,7 +61,7 @@ namespace GameState
             {
                 AddMinionToBoard(minion);
                 minion.Summon();
-                MinionSummonTriggered?.Invoke(new GameEvent(minion, GameEventType.MinionSummon, $"{minion.Name} was summoned."));
+                MinionSummonTriggered?.Invoke(new GameEvent(minion, GameEventType.MinionSummon, $"{minion.GameToString()} was summoned."));
             }
         }
 
@@ -79,7 +79,7 @@ namespace GameState
                 minion.OwnerId = OwnerId;
                 Minions.Add(minion);
                 MinionAddedToBoardTriggered?.Invoke(new GameEvent(minion, GameEventType.MinionAddedToBoard,
-                    $"{minion.Name} was added to player board."));
+                    $"{minion.GameToString()} was added to player board."));
 
                 minion.AttackTriggered += (gameEvent) =>
                 {
@@ -93,7 +93,7 @@ namespace GameState
         {
             Minions.Remove(minion);
             MinionRemovedFromBoardTriggered?.Invoke(new GameEvent(minion, GameEventType.MinionRemovedFromBoard, 
-                $"{minion.Name} was removed from player board."));
+                $"{minion.GameToString()} was removed from player board."));
         }
 
         public List<string> GetDrawToConsoleLines()

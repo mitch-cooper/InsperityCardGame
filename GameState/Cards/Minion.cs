@@ -50,7 +50,7 @@ namespace GameState
 
         protected override void OnDeathEvent()
         {
-            OnCharacterDeathEvent(new GameEvent(this, GameEventType.MinionDeath, $"{Name} has died."));
+            OnCharacterDeathEvent(new GameEvent(this, GameEventType.MinionDeath, $"{GameToString()} has died."));
             OnDeath(this, OwnerId);
         }
 

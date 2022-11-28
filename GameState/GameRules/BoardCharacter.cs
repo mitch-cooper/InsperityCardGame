@@ -77,7 +77,7 @@ namespace GameState.GameRules
                 return;
             }
             AttacksThisTurn++;
-            AttackTriggered?.Invoke(new GameEvent(this, GameEventType.Attack, $"{Name} attacked {unit.Name}."));
+            AttackTriggered?.Invoke(new GameEvent(this, GameEventType.Attack, $"{GameToString()} attacked {unit.GameToString()}."));
             unit.TakeDamage(Attack.CurrentValue);
             TakeDamage(unit.Attack.CurrentValue);
         }

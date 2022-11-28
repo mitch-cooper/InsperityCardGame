@@ -109,13 +109,13 @@ namespace GameState
                 case Minion m:
                     m.OnPlay(m, m.OwnerId);
                     RemoveCard(m.CardId);
-                    MinionPlayTriggered?.Invoke(new GameEvent(m, GameEventType.MinionPlay, $"{m.Name} was played."));
+                    MinionPlayTriggered?.Invoke(new GameEvent(m, GameEventType.MinionPlay, $"{m.GameToString()} was played."));
                     player.Board.SummonMinion(m);
                     break;
                 case Spell s:
                     s.OnPlay(s, s.OwnerId);
                     RemoveCard(s.CardId);
-                    SpellPlayTriggered?.Invoke(new GameEvent(s, GameEventType.SpellPlay, $"{s.Name} was played."));
+                    SpellPlayTriggered?.Invoke(new GameEvent(s, GameEventType.SpellPlay, $"{s.GameToString()} was played."));
                     break;
             }
             player.Coins.AddToCurrentValue(-1 * cardToPlay.Cost.CurrentValue);
