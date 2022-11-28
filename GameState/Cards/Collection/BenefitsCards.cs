@@ -58,9 +58,9 @@ namespace GameState.Cards.Collection
                 });
         }
 
-        public static MinionBuilder HSAContributer()
+        public static MinionBuilder HSAContributor()
         {
-            return new MinionBuilder("HSA Contributer", 3, 3, 3, "OnPlay: Restore 3 health. Draw a card.", Rarity.Rare)
+            return new MinionBuilder("HSA Contributor", 3, 3, 3, "OnPlay: Restore 3 health. Draw a card.", Rarity.Rare)
                 .AddTargetingParams(TargetCategory.All)
                 .AddOnPlay((minion, playerId) =>
                 {
@@ -140,14 +140,14 @@ namespace GameState.Cards.Collection
         
         public static SpellBuilder HospitalOvercrowding()
         {
-            return new SpellBuilder("Hospital Overcrowding", 7, "Deal 1 damage to all enemy minions. Increase by 1 for each enemy minion.", Rarity.Common)
+            return new SpellBuilder("Hospital Overcrowding", 7, "Deal 2 damage to all enemy minions. Increase by 1 for each enemy minion.", Rarity.Common)
                 .AddSpellType(SpellType.Illness)
                 .AddOnPlay((spell, playerId) =>
                 {
                     var enemyMinions = GameController.GetOpponent(playerId).Board.GetAllMinions();
                     foreach(var enemyMinion in enemyMinions)
                     {
-                        enemyMinion.TakeDamage(1 + enemyMinions.Count);
+                        enemyMinion.TakeDamage(2 + enemyMinions.Count);
                     }
                 });
         }
