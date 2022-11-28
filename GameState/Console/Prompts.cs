@@ -79,6 +79,10 @@ namespace GameState
             Predicate<BoardCharacter> filterPredicate = null)
         {
             var targetDictionary = TargetMatcher.GetTargets(currentPlayerId, targetCategory, filterPredicate);
+            if (!targetDictionary.Any())
+            {
+                return null;
+            }
             targetDictionary.Add(Constants.CancelKey, null);
             ColorConsole.WriteLine("\nSelect Target: ");
             foreach (var prompt in targetDictionary)

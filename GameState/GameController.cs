@@ -67,14 +67,17 @@ namespace GameState
             var winner = GetOpponent(gameEvent.Entity.OwnerId);
             ColorConsole.WriteWrappedHeader($"{winner.Name} wins!");
             ColorConsole.WriteLine(string.Empty);
-            if (Prompts.WantToPlayAgain())
-            {
-                StartGame(Player1, Player2);
-            }
-            else
-            {
-                Environment.Exit(0);
-            }
+            ColorConsole.WriteLine("Press any key to exit.");
+            Console.ReadKey();
+            // TODO: fix the board/deck/character reset to offer play again option
+            //if (Prompts.WantToPlayAgain())
+            //{
+            //    StartGame(Player1, Player2);
+            //}
+            //else
+            //{
+            //    Environment.Exit(0);
+            //}
         }
 
         private static void SubscribeToAllEvents(IGameEventEmitter.GameEventHandler action)
@@ -88,8 +91,7 @@ namespace GameState
         {
             player.AttackTriggered += action;
             player.DeathTriggered += action;
-
-            //player.Board.MinionSummonTriggered += action;
+            
             player.Board.MinionDeathTriggered += action;
             player.Board.MinionAttackTriggered += action;
 
@@ -143,9 +145,18 @@ namespace GameState
             var linesBoard = player.Board.GetDrawToConsoleLines();
             var deck = player.Deck.GetDrawToConsoleLines();
             var linesBoardDeck = GameToConsoleHelper.InitializeListWithValue("", Math.Min(linesBoard.Count, deck.Count));
+            var minions = player.Board.GetAllMinions();
             for (var i = 0; i < linesBoardDeck.Count; i++)
             {
-                linesBoardDeck[i] = $"{linesBoard[i]}{deck[i]}";
+                var minionText = string.Empty;
+                if (i < minions.Count)
+                {
+                    var minionInput = player.IsMyTurn
+                        ? Constants.CurrentPlayersMinionKeys[i].ToString()
+                        : Constants.OpponentsMinionKeys[i].ToString();
+                    minionText = $"\t{minionInput} - {minions[i].GameToString()}";
+                }
+                linesBoardDeck[i] = $"{linesBoard[i]}{deck[i]}{minionText}";
             }
 
             var allLines = new List<string>();
