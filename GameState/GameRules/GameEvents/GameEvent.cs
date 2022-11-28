@@ -41,5 +41,6 @@ namespace GameState.GameRules
         MinionSummon,
         MinionAddedToBoard,
         MinionRemovedFromBoard,
+        MinionTextTrigger
     }
 }

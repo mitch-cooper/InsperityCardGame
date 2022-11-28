@@ -77,8 +77,12 @@ namespace GameState.Cards.Collection
                         if (spell.Type == SpellType.Business)
                         {
                             var enemyMinions = TargetMatcher.GetTargets(spell.OwnerId, TargetCategory.EnemyMinions);
-                            var randomEnemyMinion = enemyMinions.ToList()[new Random().Next(enemyMinions.Count)].Value;
-                            randomEnemyMinion.TakeDamage(2);
+                            if (enemyMinions != null)
+                            {
+                                var randomEnemyMinion = enemyMinions.ToList()[new Random().Next(enemyMinions.Count)].Value;
+                                GameController.HistoryLog.AddEvent(new GameEvent(minion, GameEventType.MinionTextTrigger, $"{minion.GameToString()}'s effect triggered and dealt 2 damage to {randomEnemyMinion.GameToString()}."));
+                                randomEnemyMinion.TakeDamage(2);
+                            }
                         }
                     };
                     hand.SpellPlayTriggered += effectFunction;
@@ -168,6 +172,7 @@ namespace GameState.Cards.Collection
                     {
                         if (gameEvent.Entity.OwnerId == playerId)
                         {
+                            GameController.HistoryLog.AddEvent(new GameEvent(minion, GameEventType.MinionTextTrigger, $"{minion.GameToString()}'s end of turn effect triggered."));
                             GameController.GetPlayer(playerId).RestoreHealth(6);
                         }
                     };
@@ -175,6 +180,7 @@ namespace GameState.Cards.Collection
                     {
                         if (gameEvent.Entity.OwnerId == playerId)
                         {
+                            GameController.HistoryLog.AddEvent(new GameEvent(minion, GameEventType.MinionTextTrigger, $"{minion.GameToString()}'s start of turn effect triggered."));
                             GameController.GetPlayer(playerId).Draw();
                         }
                     };

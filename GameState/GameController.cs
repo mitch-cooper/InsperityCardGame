@@ -67,7 +67,7 @@ namespace GameState
             var winner = GetOpponent(gameEvent.Entity.OwnerId);
             ColorConsole.WriteWrappedHeader($"{winner.Name} wins!");
             ColorConsole.WriteLine(string.Empty);
-            ColorConsole.WriteLine("Press any key to exit.");
+            ColorConsole.WriteLine("Press any key to exit: ");
             Console.ReadKey();
             // TODO: fix the board/deck/character reset to offer play again option
             //if (Prompts.WantToPlayAgain())
@@ -106,7 +106,7 @@ namespace GameState
             PrintDivider();
             PrintPlayer(Player1, false);
             ColorConsole.WriteLine(string.Empty);
-            HistoryLog.PrintNthEvents(3);
+            HistoryLog.PrintNthEvents(5);
             ColorConsole.WriteLine(string.Empty);
         }
 

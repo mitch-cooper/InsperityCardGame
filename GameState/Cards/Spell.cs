@@ -31,7 +31,7 @@ namespace GameState
         {
             var cost = Cost.GameToStringValues();
             var spellTypeDisplay = Type == SpellType.None ? string.Empty : $" ({Type})";
-            return $"[({ColorConsole.FormatEmbeddedColor(cost.Value, cost.Color)}) {ColorConsole.FormatEmbeddedColor(Name, (ConsoleColor) Rarity)} - {DisplayText}{spellTypeDisplay}]";
+            return $"[({ColorConsole.FormatEmbeddedColor(cost.Value, cost.Color)}) {ColorConsole.FormatEmbeddedColor(Name, (ConsoleColor) Rarity)} - {ColorConsole.FormatEmbeddedColor($"{DisplayText}{spellTypeDisplay}", ConsoleColor.Gray)}]";
         }
     }
 

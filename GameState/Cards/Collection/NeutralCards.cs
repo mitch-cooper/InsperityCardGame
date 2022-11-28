@@ -30,6 +30,7 @@ namespace GameState.Cards.Collection
                         {
                             var enemies = TargetMatcher.GetTargets(gameEvent.Entity.OwnerId, TargetCategory.Enemies);
                             var randomEnemy = enemies.ToList()[new Random().Next(enemies.Count)].Value;
+                            GameController.HistoryLog.AddEvent(new GameEvent(minion, GameEventType.MinionTextTrigger, $"{minion.GameToString()}'s effect triggered and dealt 1 damage to {randomEnemy.GameToString()}."));
                             randomEnemy.TakeDamage(1);
                         }
                     };
